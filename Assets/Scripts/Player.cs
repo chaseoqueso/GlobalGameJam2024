@@ -6,6 +6,57 @@ using System;
 
 public class Player : NetworkBehaviour
 {
+    [HideInInspector] public Rigidbody rb;
+
+    #region Stats
+    [Tooltip("Determined max speed")]
+    private float speed;
+    [Tooltip("Reduces knockback distance and damage taken")]
+    private float weight;
+    [Tooltip("Reduces charge cooldown")]
+    private float charge_up;
+    [Tooltip("Movement acceleration")]
+    private float handling;
+    #endregion
+
+    #region CharacterParts
+    public GameObject head;
+    public GameObject body;
+    public GameObject legs;
+
+    void InstantiateParts()
+    {
+        Transform head_slot = model.transform.GetChild(0);
+        GameObject headObject = Instantiate(head, head.transform.position, head.transform.rotation);
+        headObject.transform.parent = head_slot;
+
+        Transform body_slot = model.transform.GetChild(1);
+        GameObject bodyObject = Instantiate(body, body.transform.position, body.transform.rotation);
+        bodyObject.transform.parent = body_slot;
+
+        Transform legs_slot = model.transform.GetChild(2);
+        GameObject legsObject = Instantiate(legs, legs.transform.position, legs.transform.rotation);
+        legsObject.transform.parent = legs_slot;
+    }
+
+    void GenerateStats()
+    {
+        Part head_stats = head.GetComponent<Part>();
+        Part body_stats = body.GetComponent<Part>();
+        Part legs_stats = legs.GetComponent<Part>();
+
+        speed = head_stats.speed + body_stats.speed + legs_stats.speed;
+        Debug.Log(String.Format("Speed set to {0}", speed));
+        weight = head_stats.weight + body_stats.weight + legs_stats.weight;
+        Debug.Log(String.Format("Weight set to {0}", weight));
+        charge_up = head_stats.charge_up + body_stats.charge_up + legs_stats.charge_up;
+        Debug.Log(String.Format("Charge Up set to {0}", charge_up));
+        handling = head_stats.handling + body_stats.handling + legs_stats.handling;
+        Debug.Log(String.Format("Handling set to {0}", handling));
+    }
+    #endregion
+
+    #region PlayerMovement
     [Header("Movement")]
     [Tooltip("The max movement speed when not dashing.")]
     public float moveSpeed;
@@ -40,8 +91,6 @@ public class Player : NetworkBehaviour
     [Tooltip("The spin speed (rotations per second) when dashing.")]
     public float dashingSpinSpeed;
 
-    [HideInInspector] public Rigidbody rb;
-
     private Vector2 moveInput;
     private Vector2 oldMoveInput;
     private bool firePressed;
@@ -74,10 +123,13 @@ public class Player : NetworkBehaviour
     }
     private float maxDashAmount;
     private bool dashing;
+    #endregion
 
     void Awake()
     {
         rb = GetComponent<Rigidbody>();
+        InstantiateParts();
+        GenerateStats();
     }
 
     void Start()
