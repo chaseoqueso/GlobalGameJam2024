@@ -128,7 +128,7 @@ public class Player : NetworkBehaviour
             velocity += dashDirection.normalized * dashAccel * Time.fixedDeltaTime;
 
             float dashBonus = Mathf.InverseLerp(1, -1, Vector3.Dot(Vector3.up, dashDirection));     // 1 for all the way down, 0 for all the way up
-            float minDashSpeed = dashBonus * dashSpeed;
+            float minDashSpeed = dashSpeed * Mathf.Lerp(0.2f, 0.8f, dashBonus);
             float currentDashSpeed = Mathf.Lerp(minDashSpeed, dashSpeed, dashAmount/maxDashAmount);
 
             if(velocity.magnitude > currentDashSpeed)

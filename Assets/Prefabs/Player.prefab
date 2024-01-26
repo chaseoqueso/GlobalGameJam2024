@@ -135,16 +135,16 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3a44532d4f0f4334996a5d3d392ef433, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  moveSpeed: 5
-  accel: 10
-  fallSpeed: 2
+  moveSpeed: 8
+  accel: 30
+  fallSpeed: 4
   gravityAccel: 10
   updraftMaxSpeed: 15
   updraftAccel: 150
-  dashSpeed: 25
+  dashSpeed: 30
   dashAccel: 100
   dashChargeTime: 1
-  dashDuration: 1
+  dashDuration: 0.75
   rb: {fileID: 0}
 --- !u!114 &1417767336599681568
 MonoBehaviour:
