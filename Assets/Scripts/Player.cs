@@ -30,6 +30,16 @@ public class Player : NetworkBehaviour
     [Tooltip("The amount of time the dash lasts for (when fully charged).")]
     public float dashDuration;
 
+    [Header("Spinning")]
+    [Tooltip("The character model.")]
+    public Transform model;
+    [Tooltip("The spin speed (rotations per second) when not moving.")]
+    public float idleSpinSpeed;
+    [Tooltip("The spin speed (rotations per second) when moving normally.")]
+    public float movingSpinSpeed;
+    [Tooltip("The spin speed (rotations per second) when dashing.")]
+    public float dashingSpinSpeed;
+
     [HideInInspector] public Rigidbody rb;
 
     private Vector2 moveInput;
@@ -37,7 +47,11 @@ public class Player : NetworkBehaviour
     private bool firePressed;
     private bool oldFirePressed;
 
-    private Vector3 velocity;
+    private readonly NetworkVariable<Vector3> Velocity = new();
+    private Vector3 velocity {
+        get => Velocity.Value;
+        set => Velocity.Value = value;
+    }
     private Vector2 horVelocity 
     { 
         get => new(velocity.x, velocity.z); 
@@ -46,8 +60,11 @@ public class Player : NetworkBehaviour
     private float verVelocity 
     { 
         get => velocity.y; 
-        set => velocity.y = value;
+        set => velocity = new(velocity.x, value, velocity.z);
     }
+
+    private Vector3 lookDirection;
+    private Vector3 oldLookDirection;
 
     private Vector3 dashDirection;
     private float dashAmount;
@@ -79,13 +96,18 @@ public class Player : NetworkBehaviour
 
     void Update()
     {
+        if(IsClient)
+        {
+            UpdateClient();
+        }
+
         if(IsServer)
         {
             UpdateServer();
         }
     }
 
-    void UpdateServer()
+    private void UpdateServer()
     {
         if(dashing)
         {
@@ -109,8 +131,33 @@ public class Player : NetworkBehaviour
             {
                 dashing = true;
                 maxDashAmount = dashAmount;
+                dashDirection = lookDirection;
             }
         }
+    }
+
+    private void UpdateClient()
+    {
+        if(IsOwner)
+        {
+            lookDirection = Camera.main.transform.forward;
+            if(lookDirection != oldLookDirection)
+            {
+                oldLookDirection = lookDirection;
+                LookDirectionServerRpc(lookDirection);
+            }
+        }
+
+        float spinSpeed;
+        if(velocity.magnitude > moveSpeed)
+        {
+            spinSpeed = Mathf.Lerp(movingSpinSpeed, dashingSpinSpeed, Mathf.InverseLerp(moveSpeed, dashSpeed, velocity.magnitude));
+        }
+        else
+        {
+            spinSpeed = Mathf.Lerp(idleSpinSpeed, movingSpinSpeed, Mathf.InverseLerp(0, moveSpeed, velocity.magnitude));
+        }
+        model.Rotate(0, 360 * spinSpeed * Time.deltaTime, 0);
     }
 
     void FixedUpdate()
@@ -121,7 +168,7 @@ public class Player : NetworkBehaviour
         }
     }
 
-    void FixedUpdateServer()
+    private void FixedUpdateServer()
     {
         if(dashing)
         {
@@ -159,13 +206,13 @@ public class Player : NetworkBehaviour
             }
             else
             {
-                Vector3 rotatedInput = Quaternion.FromToRotation(Vector3.forward, Vector3.ProjectOnPlane(Camera.main.transform.forward, Vector3.up)) * new Vector3(moveInput.x, 0, moveInput.y);
+                Vector3 rotatedInput = Quaternion.FromToRotation(Vector3.forward, Vector3.ProjectOnPlane(lookDirection, Vector3.up)) * new Vector3(moveInput.x, 0, moveInput.y);
                 velocity += rotatedInput * accel * Time.fixedDeltaTime;
                 if(horVelocity.magnitude > moveSpeed)
                 {
-                    if(horVelocity.magnitude > moveSpeed + 2*accel*Time.fixedDeltaTime)
+                    if(horVelocity.magnitude > moveSpeed + accel*Time.fixedDeltaTime)
                     {
-                        horVelocity = horVelocity.normalized * (horVelocity.magnitude - 2*accel*Time.fixedDeltaTime);
+                        horVelocity = horVelocity.normalized * (horVelocity.magnitude - accel*Time.fixedDeltaTime);
                     }
                     else
                     {
@@ -197,25 +244,31 @@ public class Player : NetworkBehaviour
 
     void OnMove(InputValue inputValue)
     {
-        Vector2 input = inputValue.Get<Vector2>();
-        if(input != oldMoveInput)
+        if(IsOwner)
         {
-            MoveInputServerRpc(input);
-            oldMoveInput = input;
+            Vector2 input = inputValue.Get<Vector2>();
+            if(input != oldMoveInput)
+            {
+                MoveInputServerRpc(input);
+                oldMoveInput = input;
+            }
         }
     }
 
     void OnFire(InputValue inputValue)
     {
-        bool input = inputValue.Get<float>() > 0;
-        if(input != oldFirePressed)
+        if(IsOwner)
         {
-            FireInputServerRpc(input);
-            oldFirePressed = input;
-
-            if(!input)
+            bool input = inputValue.Get<float>() > 0;
+            if(input != oldFirePressed)
             {
-                LookDirectionServerRpc(Camera.main.transform.forward);
+                FireInputServerRpc(input);
+                oldFirePressed = input;
+
+                if(!input)
+                {
+                    LookDirectionServerRpc(lookDirection);
+                }
             }
         }
     }
@@ -225,6 +278,19 @@ public class Player : NetworkBehaviour
         if(IsServer && other.gameObject.layer == LayerMask.NameToLayer("Updraft") && verVelocity < updraftMaxSpeed)
         {
             verVelocity += updraftAccel * Time.fixedDeltaTime;
+        }
+    }
+
+    void OnCollisionEnter(Collision collision)
+    {
+        if(dashing)
+        {
+            dashDirection = Vector3.Reflect(dashDirection, collision.GetContact(0).normal);
+        }
+
+        if(dashing || horVelocity.magnitude > moveSpeed)
+        {
+            horVelocity = Vector3.Reflect(horVelocity.normalized, collision.GetContact(0).normal) * horVelocity.magnitude * 0.6f;
         }
     }
 
@@ -243,6 +309,6 @@ public class Player : NetworkBehaviour
     [ServerRpc]
     private void LookDirectionServerRpc(Vector3 dir)
     {
-        dashDirection = dir;
+        lookDirection = dir;
     }
 }
