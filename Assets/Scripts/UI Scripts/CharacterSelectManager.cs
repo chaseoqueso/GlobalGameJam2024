@@ -4,8 +4,25 @@ using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
 
+public enum ModelPart{
+    Head,   // 0
+    Torso,  // 1
+    Legs    // 2
+}
+
+public enum ModelID{
+    ShovelKnight,
+    OldGod,
+    Dinosaur,
+    Clown,
+    Kirby,
+    EndEnum
+}
+
 public class CharacterSelectManager : MonoBehaviour
 {
+    [SerializeField] private ModelSelectCircle modelSelectCircle;
+
     public bool playerIsReady {get; private set;}
 
     #region Interactable Objects
@@ -26,6 +43,8 @@ public class CharacterSelectManager : MonoBehaviour
     [SerializeField] private GameObject lobbyPanelBackground;
 
     [SerializeField] private GameObject playerPanelPrefab;
+    [SerializeField] private Sprite readyButtonSprite;
+    [SerializeField] private Sprite cancelButtonSprite;
 
     void Start()
     {
@@ -36,31 +55,28 @@ public class CharacterSelectManager : MonoBehaviour
         DisplayNewPlayer(); // TODO: Pass in this player's info
     }
 
-    #region Model/Stat Stuff
+    #region Display Model/Stat Stuff
         public void RotateHead(bool selectNext)
         {
-            // TODO
-
+            modelSelectCircle.RotateHead(selectNext);
             SetStats();
         }
 
         public void RotateTorso(bool selectNext)
         {
-            // TODO
-
+            modelSelectCircle.RotateTorso(selectNext);
             SetStats();
         }
 
         public void RotateLegs(bool selectNext)
         {
-            // TODO
-
+            modelSelectCircle.RotateLegs(selectNext);
             SetStats();
         }
 
         private void SetStats()
         {
-            // TODO: Display the stats of that character
+            // TODO: Display the stats of the current character
 
             // TEMP for visualization purposes
             speedSlider.value = Random.Range(1,11);
@@ -79,9 +95,11 @@ public class CharacterSelectManager : MonoBehaviour
 
             if(playerIsReady){
                 readyText.text = "CANCEL";
+                readyButton.image.sprite = cancelButtonSprite;
             }
             else{
                 readyText.text = "READY";
+                readyButton.image.sprite = readyButtonSprite;
             }
 
             // TODO: Alert server
@@ -97,7 +115,11 @@ public class CharacterSelectManager : MonoBehaviour
 
         public void RandomizeButton()
         {
-            // TODO: Generate three random numbers and select a random thing from each category
+            int headValue = Random.Range(0,(int)ModelID.EndEnum);
+            int torsoValue = Random.Range(0,(int)ModelID.EndEnum);
+            int legsValue = Random.Range(0,(int)ModelID.EndEnum);
+
+            // TODO: Rotate to these immediately
         }
 
         public void QuitButton()
@@ -121,7 +143,9 @@ public class CharacterSelectManager : MonoBehaviour
 
         public void PlayerIsReady(bool isReady) // TODO: pass in player number or Player or something
         {
-            // TODO: Tell the UI to toggle that one's Ready overlay (or no longer Ready)
+            // TODO: Tell the associated LobbyPlayerPanel to toggle that one's Ready overlay (or no longer Ready)
+
+            // lobbyPlayerPanel.PlayerIsReady(isReady);
         }
     #endregion
 }
