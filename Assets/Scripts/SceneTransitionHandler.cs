@@ -52,7 +52,7 @@ public class SceneTransitionHandler : NetworkBehaviour
     /// Sets the current scene state to help with transitioning.
     /// </summary>
     /// <param name="sceneState"></param>
-    public void SetSceneState(SceneStates sceneState)
+    private void SetSceneState(SceneStates sceneState)
     {
         this.sceneState = sceneState;
         OnSceneStateChanged?.Invoke(this.sceneState);
@@ -80,9 +80,10 @@ public class SceneTransitionHandler : NetworkBehaviour
     /// <summary>
     /// Switches to a new scene
     /// </summary>
-    /// <param name="scenename"></param>
-    public void SwitchScene(string scenename)
+    /// <param name="scene"></param>
+    public void SwitchScene(SceneStates scene)
     {
+        string scenename = GetSceneName(scene);
         if(NetworkManager.Singleton.IsListening)
         {
             numberOfClientsLoaded = 0;
@@ -92,6 +93,17 @@ public class SceneTransitionHandler : NetworkBehaviour
         {
             SceneManager.LoadSceneAsync(scenename);
         }
+        SetSceneState(scene);
+    }
+
+    private string GetSceneName(SceneStates state)
+    {
+        return state switch
+        {
+            SceneStates.Lobby => GameManager.CHAR_SELECT_SCENE,
+            SceneStates.Ingame => GameManager.GAME_SCENE,
+            _ => GameManager.MAIN_MENU_SCENE,
+        };
     }
 
     private void OnLoadComplete(ulong clientId, string sceneName, LoadSceneMode loadSceneMode)

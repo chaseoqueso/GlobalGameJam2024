@@ -129,7 +129,7 @@ public class MainMenu : MonoBehaviour
         if (SetConnectionData() && NetworkManager.Singleton.StartHost())
         {
             SceneTransitionHandler.Instance.RegisterCallbacks();
-            SceneTransitionHandler.Instance.SwitchScene(GameManager.CHAR_SELECT_SCENE);
+            SceneTransitionHandler.Instance.SwitchScene(SceneTransitionHandler.SceneStates.Lobby);
         }
     }
 
