@@ -4,8 +4,25 @@ using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
 
+public enum ModelPart{
+    Head,   // 0
+    Torso,  // 1
+    Legs    // 2
+}
+
+public enum ModelID{
+    ShovelKnight,
+    OldGod,
+    Dinosaur,
+    Clown,
+    Kirby,
+    EndEnum
+}
+
 public class CharacterSelectManager : MonoBehaviour
 {
+    [SerializeField] private ModelSelectCircle modelSelectCircle;
+
     public bool playerIsReady {get; private set;}
 
     #region Interactable Objects
@@ -39,28 +56,25 @@ public class CharacterSelectManager : MonoBehaviour
     #region Model/Stat Stuff
         public void RotateHead(bool selectNext)
         {
-            // TODO
-
+            modelSelectCircle.RotateHead(selectNext);
             SetStats();
         }
 
         public void RotateTorso(bool selectNext)
         {
-            // TODO
-
+            modelSelectCircle.RotateTorso(selectNext);
             SetStats();
         }
 
         public void RotateLegs(bool selectNext)
         {
-            // TODO
-
+            modelSelectCircle.RotateLegs(selectNext);
             SetStats();
         }
 
         private void SetStats()
         {
-            // TODO: Display the stats of that character
+            // TODO: Display the stats of the current character
 
             // TEMP for visualization purposes
             speedSlider.value = Random.Range(1,11);
