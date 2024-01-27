@@ -87,11 +87,6 @@ public class Player : NetworkBehaviour
             Cursor.lockState = CursorLockMode.Locked;
             Cursor.visible = false;
         }
-
-        if (IsServer)
-        {
-            transform.position += Vector3.up * 5;
-        }
     }
 
     void Update()

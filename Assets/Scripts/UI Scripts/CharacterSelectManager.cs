@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
+using Unity.Netcode;
 
 public enum ModelPart{
     Head,   // 0
@@ -19,7 +20,7 @@ public enum ModelID{
     EndEnum
 }
 
-public class CharacterSelectManager : MonoBehaviour
+public class CharacterSelectManager : NetworkBehaviour
 {
     [SerializeField] private ModelSelectCircle modelSelectCircle;
 
@@ -45,6 +46,9 @@ public class CharacterSelectManager : MonoBehaviour
     [SerializeField] private GameObject playerPanelPrefab;
     [SerializeField] private Sprite readyButtonSprite;
     [SerializeField] private Sprite cancelButtonSprite;
+    
+    private bool allPlayersInLobby;
+    private Dictionary<ulong, bool> clientsInLobby;
 
     void Start()
     {
@@ -102,7 +106,7 @@ public class CharacterSelectManager : MonoBehaviour
                 readyButton.image.sprite = readyButtonSprite;
             }
 
-            // TODO: Alert server
+            PlayerIsReady(playerIsReady);
         }
 
         private void ToggleInteractableUI(bool toggle)
@@ -129,6 +133,172 @@ public class CharacterSelectManager : MonoBehaviour
     #endregion
 
     #region Lobby Stuff
+
+        public override void OnNetworkSpawn()
+        {
+            clientsInLobby = new();
+            
+            //Always add ourselves to the list at first
+            clientsInLobby.Add(NetworkManager.LocalClientId, false);
+
+            //If we are hosting, then handle the server side for detecting when clients have connected
+            //and when their lobby scenes are finished loading.
+            if (IsServer)
+            {
+                allPlayersInLobby = false;
+
+                //Server will be notified when a client connects
+                NetworkManager.OnClientConnectedCallback += OnClientConnectedCallback;
+                SceneTransitionHandler.Instance.OnClientLoadedScene += ClientLoadedScene;
+            }
+
+            //Update our lobby
+            GenerateUsersInLobby();
+        }
+
+        private void GenerateUsersInLobby()
+        {
+            // TODO fill the lobby UI with players
+            // lobbyPlayerPanel.PlayerIsReady(isReady);
+        }
+
+        /// <summary>
+        ///     ClientLoadedScene
+        ///     Invoked when a client has loaded this scene
+        /// </summary>
+        /// <param name="clientId"></param>
+        private void ClientLoadedScene(ulong clientId)
+        {
+            if (IsServer)
+            {
+                if (!clientsInLobby.ContainsKey(clientId))
+                {
+                    clientsInLobby.Add(clientId, false);
+                    GenerateUsersInLobby();
+                }
+
+                UpdateAndCheckPlayersInLobby();
+            }
+        }
+
+        /// <summary>
+        ///     OnClientConnectedCallback
+        ///     Since we are entering a lobby and Netcode's NetworkManager is spawning the player,
+        ///     the server can be configured to only listen for connected clients at this stage.
+        /// </summary>
+        /// <param name="clientId">client that connected</param>
+        private void OnClientConnectedCallback(ulong clientId)
+        {
+            if (IsServer)
+            {
+                if (!clientsInLobby.ContainsKey(clientId)) clientsInLobby.Add(clientId, false);
+                GenerateUsersInLobby();
+
+                UpdateAndCheckPlayersInLobby();
+            }
+        }
+
+        /// <summary>
+        ///     UpdateAndCheckPlayersInLobby
+        ///     Checks to see if we have at least 2 or more people to start
+        /// </summary>
+        private void UpdateAndCheckPlayersInLobby()
+        {
+            allPlayersInLobby = clientsInLobby.Count >= 2;
+
+            foreach (var clientLobbyStatus in clientsInLobby)
+            {
+                SendClientReadyStatusUpdatesClientRpc(clientLobbyStatus.Key, clientLobbyStatus.Value);
+                if (!NetworkManager.Singleton.ConnectedClients.ContainsKey(clientLobbyStatus.Key))
+
+                    //If some clients are still loading into the lobby scene then this is false
+                    allPlayersInLobby = false;
+            }
+
+            CheckForAllPlayersReady();
+        }
+
+        /// <summary>
+        ///     SendClientReadyStatusUpdatesClientRpc
+        ///     Sent from the server to the client when a player's status is updated.
+        ///     This also populates the connected clients' (excluding host) player state in the lobby
+        /// </summary>
+        /// <param name="clientId"></param>
+        /// <param name="isReady"></param>
+        [ClientRpc]
+        private void SendClientReadyStatusUpdatesClientRpc(ulong clientId, bool isReady)
+        {
+            if (!IsServer)
+            {
+                if (!clientsInLobby.ContainsKey(clientId))
+                    clientsInLobby.Add(clientId, isReady);
+                else
+                    clientsInLobby[clientId] = isReady;
+                GenerateUsersInLobby();
+            }
+        }
+
+        /// <summary>
+        ///     CheckForAllPlayersReady
+        ///     Checks to see if all players are ready, and if so launches the game
+        /// </summary>
+        private void CheckForAllPlayersReady()
+        {
+            if (allPlayersInLobby)
+            {
+                var allPlayersAreReady = true;
+                foreach (var clientLobbyStatus in clientsInLobby)
+                    if (!clientLobbyStatus.Value)
+
+                        //If some clients are still loading into the lobby scene then this is false
+                        allPlayersAreReady = false;
+
+                //Only if all players are ready
+                if (allPlayersAreReady)
+                {
+                    //Remove our client connected callback
+                    NetworkManager.Singleton.OnClientConnectedCallback -= OnClientConnectedCallback;
+
+                    //Remove our scene loaded callback
+                    SceneTransitionHandler.Instance.OnClientLoadedScene -= ClientLoadedScene;
+
+                    //Transition to the ingame scene
+                    SceneTransitionHandler.Instance.SwitchScene(SceneTransitionHandler.SceneStates.Ingame);
+                }
+            }
+        }
+
+        private void PlayerIsReady(bool isReady)
+        {
+            clientsInLobby[NetworkManager.Singleton.LocalClientId] = isReady;
+            if (IsServer)
+            {
+                UpdateAndCheckPlayersInLobby();
+            }
+            else
+            {
+                OnClientIsReadyServerRpc(NetworkManager.Singleton.LocalClientId, isReady);
+            }
+
+            GenerateUsersInLobby();
+        }
+
+        /// <summary>
+        ///     OnClientIsReadyServerRpc
+        ///     Sent to the server when the player clicks the ready button
+        /// </summary>
+        /// <param name="clientid">clientId that is ready</param>
+        [ServerRpc(RequireOwnership = false)]
+        private void OnClientIsReadyServerRpc(ulong clientid, bool isReady)
+        {
+            if (clientsInLobby.ContainsKey(clientid))
+            {
+                clientsInLobby[clientid] = isReady;
+                UpdateAndCheckPlayersInLobby();
+                GenerateUsersInLobby();
+            }
+        }
+        
         public void DisplayNewPlayer() // TODO: pass in player number or Player or something
         {
             Instantiate(playerPanelPrefab, new Vector3(0,0,0), Quaternion.identity, lobbyPanelBackground.transform);
@@ -139,13 +309,6 @@ public class CharacterSelectManager : MonoBehaviour
         public void RemovePlayer() // TODO: pass in player number or Player or something
         {
             // TODO: Delete that panel
-        }
-
-        public void PlayerIsReady(bool isReady) // TODO: pass in player number or Player or something
-        {
-            // TODO: Tell the associated LobbyPlayerPanel to toggle that one's Ready overlay (or no longer Ready)
-
-            // lobbyPlayerPanel.PlayerIsReady(isReady);
         }
     #endregion
 }
