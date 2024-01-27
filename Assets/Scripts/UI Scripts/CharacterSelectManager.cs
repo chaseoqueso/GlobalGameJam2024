@@ -83,10 +83,10 @@ public class CharacterSelectManager : NetworkBehaviour
             // TODO: Display the stats of the current character
 
             // TEMP for visualization purposes
-            speedSlider.value = Random.Range(1,11);
-            weightSlider.value = Random.Range(1,11);
-            handlingSlider.value = Random.Range(1,11);
-            chargeSlider.value = Random.Range(1,11);
+            speedSlider.value = Random.Range(1,10f);
+            weightSlider.value = Random.Range(1,10f);
+            handlingSlider.value = Random.Range(1,10f);
+            chargeSlider.value = Random.Range(1,10f);
         }
     #endregion
 
