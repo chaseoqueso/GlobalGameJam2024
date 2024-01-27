@@ -43,6 +43,8 @@ public class CharacterSelectManager : MonoBehaviour
     [SerializeField] private GameObject lobbyPanelBackground;
 
     [SerializeField] private GameObject playerPanelPrefab;
+    [SerializeField] private Sprite readyButtonSprite;
+    [SerializeField] private Sprite cancelButtonSprite;
 
     void Start()
     {
@@ -93,9 +95,11 @@ public class CharacterSelectManager : MonoBehaviour
 
             if(playerIsReady){
                 readyText.text = "CANCEL";
+                readyButton.image.sprite = cancelButtonSprite;
             }
             else{
                 readyText.text = "READY";
+                readyButton.image.sprite = readyButtonSprite;
             }
 
             // TODO: Alert server
@@ -139,7 +143,9 @@ public class CharacterSelectManager : MonoBehaviour
 
         public void PlayerIsReady(bool isReady) // TODO: pass in player number or Player or something
         {
-            // TODO: Tell the UI to toggle that one's Ready overlay (or no longer Ready)
+            // TODO: Tell the associated LobbyPlayerPanel to toggle that one's Ready overlay (or no longer Ready)
+
+            // lobbyPlayerPanel.PlayerIsReady(isReady);
         }
     #endregion
 }
