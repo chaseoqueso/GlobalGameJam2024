@@ -16,11 +16,10 @@ public class ModelSelectCircle : MonoBehaviour
         [SerializeField] private GameObject torsoPositionerPrefab;
         [SerializeField] private GameObject legsPositionerPrefab;
 
-        [SerializeField] private List<GameObject> models;
+        [SerializeField] private List<GameObject> models;   // Delete this once models are in
 
         private const float Z_POS_CURRENT_MODEL = -3.88f;   // Base radius
 
-        // TODO: Update these to <modelID, ScriptableObject>
         private Dictionary<ModelID,GameObject> headDatabase = new Dictionary<ModelID,GameObject>();
         private Dictionary<ModelID,GameObject> torsoDatabase = new Dictionary<ModelID,GameObject>();
         private Dictionary<ModelID,GameObject> legsDatabase = new Dictionary<ModelID,GameObject>();
@@ -32,16 +31,20 @@ public class ModelSelectCircle : MonoBehaviour
 
     private float ROTATION_ANGLE = 60;
 
-    // public ModelPart currentHead;
-    // public ModelPart currentTorso;
-    // public ModelPart currentLegs;
+    public ModelID currentHead {get; private set;}
+    public ModelID currentTorso {get; private set;}
+    public ModelID currentLegs {get; private set;}
 
     void Start()
     {
+        currentHead = 0;
+        currentTorso = 0;
+        currentLegs = 0;
+
         // LoadAllModels();     // TODO
 
         // Positioning everything
-        // int numModels = headDatabase.Count;  // TODO
+        // int numModels = headDatabase.Count;  // TODO (uncomment this and delete the following)
         int numModels = models.Count;
         ROTATION_ANGLE = 360f / numModels;
 
@@ -60,16 +63,26 @@ public class ModelSelectCircle : MonoBehaviour
         // Generate the models in the right positions
         float rotationPositioner = 0;
         int tempColorPicker = 0;    // <- TEMP (DELETE ONCE MODLELS ARE IN)
-        foreach(GameObject model in models){    // TODO: Iterate through model databases instead
+
+        // TODO: Iterate through model databases instead
+        // for(int mID = 0; mID < (int)ModelID.EndEnum; mID++)
+        foreach(GameObject model in models)
+        {
+            // GameObject modelPrefab = headDatabase[(ModelID)mID];
+
             GameObject newHeadPos = Instantiate(headPositionerPrefab, new Vector3(0,0,0), Quaternion.identity, headCircle.transform);
             newHeadPos.transform.Translate( new Vector3(0,0,headCircle.transform.position.z), Space.Self );     // Radius
             newHeadPos.GetComponentInChildren<MeshRenderer>().transform.Translate( new Vector3(0,0,radius) );   // TEMP?
             newHeadPos.transform.Rotate( new Vector3(0,rotationPositioner,0), Space.Self );                     // Rotation on the circle
 
+            // modelPrefab = torsoDatabase[(ModelID)mID];
+
             GameObject newTorsoPos = Instantiate(torsoPositionerPrefab, new Vector3(0,0,0), Quaternion.identity, torsoCircle.transform);
             newTorsoPos.transform.Translate( new Vector3(0,0,torsoCircle.transform.position.z), Space.Self );   // Radius
             newTorsoPos.GetComponentInChildren<MeshRenderer>().transform.Translate( new Vector3(0,0,radius) );  // TEMP?
             newTorsoPos.transform.Rotate( new Vector3(0,rotationPositioner,0), Space.Self );                    // Rotation on the circle
+
+            // modelPrefab = legsDatabase[(ModelID)mID];
 
             GameObject newLegsPos = Instantiate(legsPositionerPrefab, new Vector3(0,0,0), Quaternion.identity, legsCircle.transform);
             newLegsPos.transform.Translate( new Vector3(0,0,legsCircle.transform.position.z), Space.Self );     // Radius
@@ -112,9 +125,9 @@ public class ModelSelectCircle : MonoBehaviour
         // Load in the models of each type from the relevant folder in Resources
 
         // Heads
-        Object[] headList = Resources.LoadAll("Models/Heads");   //, typeof(ModelPart));
+        Object[] headList = Resources.LoadAll("Models/Heads");
         foreach(Object h in headList){
-            GameObject head = (GameObject)h;   // Cast by ModelPart ScriptableObject type
+            GameObject head = (GameObject)h;
 
             ModelID modelID = ModelID.ShovelKnight;     // TODO: Get the ID for this model
             
@@ -127,9 +140,9 @@ public class ModelSelectCircle : MonoBehaviour
         }
 
         // Torsos
-        Object[] torsoList = Resources.LoadAll("Models/Torsos");   //, typeof(ModelPart));
+        Object[] torsoList = Resources.LoadAll("Models/Torsos");
         foreach(Object t in torsoList){
-            GameObject torso = (GameObject)t;   // Cast by ModelPart ScriptableObject type
+            GameObject torso = (GameObject)t;
 
             ModelID modelID = ModelID.ShovelKnight;     // TODO: Get the ID for this model
             
@@ -142,9 +155,9 @@ public class ModelSelectCircle : MonoBehaviour
         }
 
         // Legs
-        Object[] legsList = Resources.LoadAll("Models/Legs");   //, typeof(ModelPart));
+        Object[] legsList = Resources.LoadAll("Models/Legs");
         foreach(Object l in legsList){
-            GameObject legs = (GameObject)l;   // Cast by ModelPart ScriptableObject type
+            GameObject legs = (GameObject)l;
 
             ModelID modelID = ModelID.ShovelKnight;     // TODO: Get the ID for this model
             
@@ -167,7 +180,10 @@ public class ModelSelectCircle : MonoBehaviour
         float positioner = GetRotationAngle(selectNext);
         headCircle.transform.Rotate( new Vector3(0,positioner,0), Space.Self );
 
-        // TODO: Set the current part to the next or previous part
+        // Set the current part to the next or previous part
+        // Debug.Log(currentHead.ToString());
+        currentHead = SetCurrentModel(selectNext,currentHead);
+        // Debug.Log(currentHead.ToString());
     }
 
     public void RotateTorso(bool selectNext)
@@ -175,7 +191,8 @@ public class ModelSelectCircle : MonoBehaviour
         float positioner = GetRotationAngle(selectNext);
         torsoCircle.transform.Rotate( new Vector3(0,positioner,0), Space.Self );
 
-        // TODO: Set the current part to the next or previous part
+        // Set the current part to the next or previous part
+        currentTorso = SetCurrentModel(selectNext,currentTorso);
     }
 
     public void RotateLegs(bool selectNext)
@@ -183,7 +200,27 @@ public class ModelSelectCircle : MonoBehaviour
         float positioner = GetRotationAngle(selectNext);
         legsCircle.transform.Rotate( new Vector3(0,positioner,0), Space.Self );
 
-        // TODO: Set the current part to the next or previous part
+        // Set the current part to the next or previous part
+        currentLegs = SetCurrentModel(selectNext,currentLegs);
+    }
+
+    private ModelID SetCurrentModel(bool selectNext, ModelID current)
+    {
+        if(selectNext){
+            current++;
+            if(current == ModelID.EndEnum){
+                current = 0;
+            }
+        }
+        else{
+            if(current == 0){
+                current = (ModelID)((int)ModelID.EndEnum - 1);
+            }
+            else{
+                current--;
+            }            
+        }
+        return current;
     }
 
     private float GetRotationAngle(bool selectNext)

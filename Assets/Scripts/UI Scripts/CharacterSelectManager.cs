@@ -5,11 +5,11 @@ using UnityEngine.UI;
 using TMPro;
 using Unity.Netcode;
 
-public enum ModelPart{
-    Head,   // 0
-    Torso,  // 1
-    Legs    // 2
-}
+// public enum ModelPart{
+//     Head,   // 0
+//     Torso,  // 1
+//     Legs    // 2
+// }
 
 public enum ModelID{
     ShovelKnight,
@@ -86,10 +86,10 @@ public class CharacterSelectManager : NetworkBehaviour
             // TODO: Display the stats of the current character
 
             // TEMP for visualization purposes
-            speedSlider.value = Random.Range(1,11);
-            weightSlider.value = Random.Range(1,11);
-            handlingSlider.value = Random.Range(1,11);
-            chargeSlider.value = Random.Range(1,11);
+            speedSlider.value = Random.Range(1,10f);
+            weightSlider.value = Random.Range(1,10f);
+            handlingSlider.value = Random.Range(1,10f);
+            chargeSlider.value = Random.Range(1,10f);
         }
     #endregion
 
