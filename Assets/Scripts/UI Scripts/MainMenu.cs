@@ -135,9 +135,9 @@ public class MainMenu : MonoBehaviour
 
     private void TryJoinGame()
     {
-        if (SetConnectionData())
+        if (SetConnectionData() && NetworkManager.Singleton.StartClient())
         {
-            NetworkManager.Singleton.StartClient();
+            SceneTransitionHandler.Instance.RegisterCallbacks();
             StopAllCoroutines();
             StartCoroutine(ShowConnectingStatus());
         }

@@ -74,7 +74,7 @@ public class SceneTransitionHandler : NetworkBehaviour
     public void RegisterCallbacks()
     {
         NetworkManager.Singleton.SceneManager.OnLoadComplete += OnLoadComplete;
-        
+        NetworkManager.Singleton.OnClientDisconnectCallback += OnClientDisconnect;
     }
 
     /// <summary>
@@ -110,6 +110,18 @@ public class SceneTransitionHandler : NetworkBehaviour
     {
         numberOfClientsLoaded += 1;
         OnClientLoadedScene?.Invoke(clientId);
+    }
+
+    private void OnClientDisconnect(ulong clientId)
+    {
+        if(IsServer)
+        {
+            numberOfClientsLoaded -= 1;
+        }
+        else if(IsClient)
+        {
+            ExitAndLoadStartMenu();
+        }
     }
 
     public bool AllClientsAreLoaded()

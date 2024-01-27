@@ -136,7 +136,7 @@ public class CharacterSelectManager : NetworkBehaviour
 
         public override void OnNetworkSpawn()
         {
-            clientsInLobby = new Dictionary<ulong, bool>();
+            clientsInLobby = new();
             
             //Always add ourselves to the list at first
             clientsInLobby.Add(NetworkManager.LocalClientId, false);
@@ -268,10 +268,6 @@ public class CharacterSelectManager : NetworkBehaviour
             }
         }
 
-        /// <summary>
-        ///     PlayerIsReady
-        ///     Tied to the Ready button in the InvadersLobby scene
-        /// </summary>
         private void PlayerIsReady(bool isReady)
         {
             clientsInLobby[NetworkManager.Singleton.LocalClientId] = isReady;
