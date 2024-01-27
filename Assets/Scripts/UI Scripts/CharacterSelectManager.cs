@@ -22,6 +22,9 @@ public enum ModelID{
 
 public class CharacterSelectManager : NetworkBehaviour
 {
+    [Tooltip("The minimum number of players before the game will start.")]
+    public int minPlayers = 1;
+
     [SerializeField] private ModelSelectCircle modelSelectCircle;
 
     public bool playerIsReady {get; private set;}
@@ -204,7 +207,7 @@ public class CharacterSelectManager : NetworkBehaviour
         /// </summary>
         private void UpdateAndCheckPlayersInLobby()
         {
-            allPlayersInLobby = clientsInLobby.Count >= 2;
+            allPlayersInLobby = clientsInLobby.Count >= minPlayers;
 
             foreach (var clientLobbyStatus in clientsInLobby)
             {

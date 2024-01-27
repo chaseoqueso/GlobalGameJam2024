@@ -202,7 +202,13 @@ public class Player : NetworkBehaviour
             else
             {
                 Vector3 rotatedInput = Quaternion.FromToRotation(Vector3.forward, Vector3.ProjectOnPlane(lookDirection, Vector3.up)) * new Vector3(moveInput.x, 0, moveInput.y);
+
+                // If the velocity in the direction of input is already too big, don't add the input vector in the direction of velocity
+                if(Vector3.Project(velocity, rotatedInput).magnitude > moveSpeed)
+                    rotatedInput -= Vector3.Project(rotatedInput, velocity);
+                    
                 velocity += rotatedInput * accel * Time.fixedDeltaTime;
+
                 if(horVelocity.magnitude > moveSpeed)
                 {
                     if(horVelocity.magnitude > moveSpeed + accel*Time.fixedDeltaTime)
