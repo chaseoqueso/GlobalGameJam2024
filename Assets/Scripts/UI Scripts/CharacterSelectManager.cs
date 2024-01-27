@@ -5,6 +5,7 @@ using UnityEngine.UI;
 using TMPro;
 using Unity.Netcode;
 
+<<<<<<< HEAD
 // public enum ModelPart{
 //     Head,   // 0
 //     Torso,  // 1
@@ -20,6 +21,8 @@ public enum ModelID{
     Kirby,
     EndEnum
 }
+=======
+>>>>>>> d6ab049 (character selection loads parts from resources)
 
 public class CharacterSelectManager : NetworkBehaviour
 {

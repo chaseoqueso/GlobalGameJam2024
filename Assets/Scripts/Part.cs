@@ -1,6 +1,25 @@
 using System.Collections;
 using System.Collections.Generic;
+using System.ComponentModel;
 using UnityEngine;
+
+
+public enum ModelPart
+{
+    head,
+    body,
+    legs
+}
+
+public enum ModelID
+{
+    ShovelKnight,
+    OldGod,
+    Dinosaur,
+    Clown,
+    Kirby,
+    EndEnum
+}
 
 public class Part : MonoBehaviour
 {
@@ -14,16 +33,10 @@ public class Part : MonoBehaviour
     public float charge_up;
     [Tooltip("Movement acceleration")]
     public float handling;
-    [Tooltip("Which body part the Part represents")]
-    public BodyPart body_part;
-
-
-    public enum BodyPart  
-    {
-        head,
-        body,
-        legs
-    }
+    [Tooltip("Which model part the Part represents")]
+    public ModelPart body_part;
+    [Tooltip("Which model the Part belongs to")]
+    public ModelID model_id;
     #endregion
 
     // Start is called before the first frame update
