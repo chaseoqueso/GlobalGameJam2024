@@ -5,8 +5,25 @@ using UnityEngine.UI;
 using TMPro;
 using Unity.Netcode;
 
+public enum ModelPart{
+    Head,   // 0
+    Torso,  // 1
+    Legs    // 2
+}
+
+public enum ModelID{
+    ShovelKnight,
+    OldGod,
+    Dinosaur,
+    Clown,
+    Kirby,
+    EndEnum
+}
+
 public class CharacterSelectManager : NetworkBehaviour
 {
+    [SerializeField] private ModelSelectCircle modelSelectCircle;
+
     public bool playerIsReady {get; private set;}
 
     #region Interactable Objects
@@ -27,9 +44,10 @@ public class CharacterSelectManager : NetworkBehaviour
     [SerializeField] private GameObject lobbyPanelBackground;
 
     [SerializeField] private GameObject playerPanelPrefab;
+    [SerializeField] private Sprite readyButtonSprite;
+    [SerializeField] private Sprite cancelButtonSprite;
     
     private bool allPlayersInLobby;
-
     private Dictionary<ulong, bool> clientsInLobby;
 
     void Start()
@@ -41,31 +59,28 @@ public class CharacterSelectManager : NetworkBehaviour
         DisplayNewPlayer(); // TODO: Pass in this player's info
     }
 
-    #region Model/Stat Stuff
+    #region Display Model/Stat Stuff
         public void RotateHead(bool selectNext)
         {
-            // TODO
-
+            modelSelectCircle.RotateHead(selectNext);
             SetStats();
         }
 
         public void RotateTorso(bool selectNext)
         {
-            // TODO
-
+            modelSelectCircle.RotateTorso(selectNext);
             SetStats();
         }
 
         public void RotateLegs(bool selectNext)
         {
-            // TODO
-
+            modelSelectCircle.RotateLegs(selectNext);
             SetStats();
         }
 
         private void SetStats()
         {
-            // TODO: Display the stats of that character
+            // TODO: Display the stats of the current character
 
             // TEMP for visualization purposes
             speedSlider.value = Random.Range(1,11);
@@ -84,9 +99,11 @@ public class CharacterSelectManager : NetworkBehaviour
 
             if(playerIsReady){
                 readyText.text = "CANCEL";
+                readyButton.image.sprite = cancelButtonSprite;
             }
             else{
                 readyText.text = "READY";
+                readyButton.image.sprite = readyButtonSprite;
             }
 
             PlayerIsReady(playerIsReady);
@@ -102,7 +119,11 @@ public class CharacterSelectManager : NetworkBehaviour
 
         public void RandomizeButton()
         {
-            // TODO: Generate three random numbers and select a random thing from each category
+            int headValue = Random.Range(0,(int)ModelID.EndEnum);
+            int torsoValue = Random.Range(0,(int)ModelID.EndEnum);
+            int legsValue = Random.Range(0,(int)ModelID.EndEnum);
+
+            // TODO: Rotate to these immediately
         }
 
         public void QuitButton()
@@ -138,6 +159,7 @@ public class CharacterSelectManager : NetworkBehaviour
         private void GenerateUsersInLobby()
         {
             // TODO fill the lobby UI with players
+            // lobbyPlayerPanel.PlayerIsReady(isReady);
         }
 
         /// <summary>
