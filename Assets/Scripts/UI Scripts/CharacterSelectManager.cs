@@ -5,11 +5,11 @@ using UnityEngine.UI;
 using TMPro;
 using Unity.Netcode;
 
-public enum ModelPart{
-    Head,   // 0
-    Torso,  // 1
-    Legs    // 2
-}
+// public enum ModelPart{
+//     Head,   // 0
+//     Torso,  // 1
+//     Legs    // 2
+// }
 
 public enum ModelID{
     ShovelKnight,
