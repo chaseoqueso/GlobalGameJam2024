@@ -53,7 +53,7 @@ public class CharacterSelectManager : MonoBehaviour
         DisplayNewPlayer(); // TODO: Pass in this player's info
     }
 
-    #region Model/Stat Stuff
+    #region Display Model/Stat Stuff
         public void RotateHead(bool selectNext)
         {
             modelSelectCircle.RotateHead(selectNext);
@@ -111,7 +111,11 @@ public class CharacterSelectManager : MonoBehaviour
 
         public void RandomizeButton()
         {
-            // TODO: Generate three random numbers and select a random thing from each category
+            int headValue = Random.Range(0,(int)ModelID.EndEnum);
+            int torsoValue = Random.Range(0,(int)ModelID.EndEnum);
+            int legsValue = Random.Range(0,(int)ModelID.EndEnum);
+
+            // TODO: Rotate to these immediately
         }
 
         public void QuitButton()
