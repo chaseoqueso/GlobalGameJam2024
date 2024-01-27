@@ -5,24 +5,6 @@ using UnityEngine.UI;
 using TMPro;
 using Unity.Netcode;
 
-<<<<<<< HEAD
-// public enum ModelPart{
-//     Head,   // 0
-//     Torso,  // 1
-//     Legs    // 2
-// }
-
-public enum ModelID{
-    ShovelKnight,
-    OldGod,
-    Dinosaur,
-    Clown,
-    flatMinecraft,
-    Kirby,
-    EndEnum
-}
-=======
->>>>>>> d6ab049 (character selection loads parts from resources)
 
 public class CharacterSelectManager : NetworkBehaviour
 {
