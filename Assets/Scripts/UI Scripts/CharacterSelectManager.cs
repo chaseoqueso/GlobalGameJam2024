@@ -45,11 +45,12 @@ public class CharacterSelectManager : NetworkBehaviour
     void Start()
     {
         playerIsReady = false;
-        SetStats();
+        // SetStats();
         
         // DisplayNewPlayer(); // TODO: Pass in this player's info
 
         joinCodeText.text = GameManager.Instance.joinCode.Value;
+        Debug.Log(GameManager.Instance.GetUsername(NetworkManager.Singleton.LocalClientId));
     }
 
     #region Display Model/Stat Stuff
@@ -171,6 +172,7 @@ public class CharacterSelectManager : NetworkBehaviour
     /// <param name="clientId"></param>
     private void ClientLoadedScene(ulong clientId)
     {
+
         if (IsServer)
         {
             if (!clientsInLobby.ContainsKey(clientId))
@@ -191,11 +193,17 @@ public class CharacterSelectManager : NetworkBehaviour
     /// <param name="clientId">client that connected</param>
     private void OnClientConnectedCallback(ulong clientId)
     {
+        Debug.Log($"Loaded client {clientId} current client {NetworkManager.Singleton.LocalClientId}");
+        if(NetworkManager.Singleton.LocalClientId == clientId)
+            GameManager.Instance.AddCachedUsername(clientId);
+            
         if (IsServer)
         {
-            if (!clientsInLobby.ContainsKey(clientId)) clientsInLobby.Add(clientId, false);
-            GenerateUsersInLobby();
+            if (!clientsInLobby.ContainsKey(clientId)) 
+                clientsInLobby.Add(clientId, false);
 
+            GameManager.Instance.SyncUsernames(new ulong[]{clientId});
+            GenerateUsersInLobby();
             UpdateAndCheckPlayersInLobby();
         }
     }
@@ -204,9 +212,11 @@ public class CharacterSelectManager : NetworkBehaviour
     {
         if (IsServer)
         {
-            if (clientsInLobby.ContainsKey(clientId)) clientsInLobby.Remove(clientId);
-            GenerateUsersInLobby();
+            if (clientsInLobby.ContainsKey(clientId)) 
+                clientsInLobby.Remove(clientId);
 
+            GameManager.Instance.RemoveUsername(clientId);
+            GenerateUsersInLobby();
             UpdateAndCheckPlayersInLobby();
         }
     }

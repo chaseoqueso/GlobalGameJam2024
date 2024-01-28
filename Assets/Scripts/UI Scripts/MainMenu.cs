@@ -15,6 +15,7 @@ public class MainMenu : MonoBehaviour
     }
 
     public TMP_InputField codeInputField;
+    public TMP_InputField hostUsernameInputField;
     public TMP_InputField usernameInputField;
     public TMP_Text menuStatusText;
     public Button startButton;
@@ -64,19 +65,16 @@ public class MainMenu : MonoBehaviour
         Debug.Log(relayManager);
         if(relayManager.IsRelayEnabled)
         {
-            Debug.Log("Relay enabled");
             string joinCode = await relayManager.StartHostWithRelay();
             Debug.Log($"Join code: {joinCode}");
             
             if (joinCode != null)
             {
                 GameManager.Instance.joinCode.Value = joinCode;
-                Debug.Log("Set GameManager joinCode");
+                GameManager.Instance.cachedUsername = hostUsernameInputField.text;
                 // NetworkManager.Singleton.GetComponent<GameManager>().SetJoinCodeServerRpc(joinCode);
                 SceneTransitionHandler.Instance.RegisterCallbacks();
-                Debug.Log("Registered Callbacks");
                 SceneTransitionHandler.Instance.SwitchScene(SceneTransitionHandler.SceneStates.Lobby);
-                Debug.Log("Switched Scene");
             }
             else
             {
@@ -92,10 +90,12 @@ public class MainMenu : MonoBehaviour
     public async void TryJoinGame()
     {
         RelayManager relayManager = NetworkManager.Singleton.GetComponent<RelayManager>();
+        NetworkManager.Singleton.OnClientConnectedCallback += GameManager.Instance.AddCachedUsername;
         if(relayManager.IsRelayEnabled)
         {
             if (await relayManager.StartClientWithRelay(codeInputField.text))
             {
+                GameManager.Instance.cachedUsername = usernameInputField.text;
                 SceneTransitionHandler.Instance.RegisterCallbacks();
                 StopAllCoroutines();
                 StartCoroutine(ShowConnectingStatus());
