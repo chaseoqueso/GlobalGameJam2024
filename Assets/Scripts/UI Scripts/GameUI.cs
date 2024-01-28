@@ -21,7 +21,8 @@ public class GameUI : MonoBehaviour
     [SerializeField] private Image chargeBarFill;
 
     [SerializeField] private TMP_Text timerText;
-    [SerializeField] private TMP_Text scoreboardText;
+    [SerializeField] private TMP_Text scoreboardText1;
+    [SerializeField] private TMP_Text scoreboardText2;
     
     [SerializeField] private Slider healthBar;
 
@@ -90,24 +91,23 @@ public class GameUI : MonoBehaviour
         // Called if YOUR place changes, or if FIRST place changes
         public void UpdateScoreboard(string firstPlayerName, int firstScore, string secondPlayerName, int secondScore, int thisPlayersPlace)
         {
-            scoreboardText.text = "1st: " + firstPlayerName + " - " + firstScore + "\n";
+            scoreboardText1.text = " 1st  " + firstPlayerName + " - " + firstScore + "\n";
 
             if(thisPlayersPlace == 1){
-                scoreboardText.text += "2nd: " + secondPlayerName;
+                scoreboardText2.text += "2nd " + secondPlayerName;
             }
             else{
-                string placeStr = "" + thisPlayersPlace;
+                string placeStr = " " + thisPlayersPlace;
                 if( thisPlayersPlace == 2 ){
-                    placeStr += "nd: ";
+                    placeStr = "2nd ";
                 }
                 else if( thisPlayersPlace == 3 ){
-                    placeStr += "rd: ";
+                    placeStr += "rd ";
                 }
                 else{
-                    placeStr += "th: ";
+                    placeStr += "th ";
                 }
-
-                scoreboardText.text += placeStr + secondPlayerName + " - " + secondScore;
+                scoreboardText2.text += placeStr + secondPlayerName + " - " + secondScore;
             }
         }
     #endregion
