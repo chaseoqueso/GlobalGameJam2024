@@ -37,6 +37,8 @@ public class CharacterSelectManager : NetworkBehaviour
     [SerializeField] private Sprite cancelButtonSprite;
     [SerializeField] private TMP_Text joinCodeText;
 
+    public List<Sprite> readyTextSprites = new List<Sprite>();
+
     private HashSet<GameObject> lobbyPlayerPanels = new HashSet<GameObject>();
     
     private bool allPlayersInLobby;

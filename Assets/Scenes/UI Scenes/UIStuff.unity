@@ -329,6 +329,18 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 1587638294095517989, guid: af055e116cb59f441b9e11724074d22f, type: 3}
+      propertyPath: m_AnchorMax.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1587638294095517989, guid: af055e116cb59f441b9e11724074d22f, type: 3}
+      propertyPath: m_AnchorMax.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1587638294095517989, guid: af055e116cb59f441b9e11724074d22f, type: 3}
+      propertyPath: m_AnchorMin.y
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 1623518469764642498, guid: af055e116cb59f441b9e11724074d22f, type: 3}
       propertyPath: m_AnchorMax.x
       value: 0
@@ -384,14 +396,6 @@ PrefabInstance:
     - target: {fileID: 6041281347243796589, guid: af055e116cb59f441b9e11724074d22f, type: 3}
       propertyPath: m_Name
       value: GameUI
-      objectReference: {fileID: 0}
-    - target: {fileID: 6041281348393465041, guid: af055e116cb59f441b9e11724074d22f, type: 3}
-      propertyPath: m_AnchorMax.x
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 6041281348393465041, guid: af055e116cb59f441b9e11724074d22f, type: 3}
-      propertyPath: m_AnchorMax.y
-      value: 0
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: af055e116cb59f441b9e11724074d22f, type: 3}
