@@ -48,12 +48,10 @@ public class ModelSelectCircle : MonoBehaviour
         currentTorso = 0;
         currentLegs = 0;
 
-        // int numModels = headDatabase.Count;  // TODO (uncomment this and delete the following)
-        // LoadAllModels();
-
         // Positioning everything
-        int fillModels = models.Count - headDatabase.Count;
-        int numModels = models.Count;
+        // int fillModels = models.Count - headDatabase.Count;
+        int numModels = headDatabase.Count;
+        // int numModels = models.Count;
         ROTATION_ANGLE = 360f / numModels;
 
         float zValueMod = 0f;
@@ -72,10 +70,8 @@ public class ModelSelectCircle : MonoBehaviour
         float rotationPositioner = 0;
         int tempColorPicker = 0;    // <- TEMP (DELETE ONCE MODLELS ARE IN)
 
-        // TODO: Iterate through model databases instead
-        // for(int mID = 0; mID < (int)ModelID.EndEnum; mID++)
-        foreach(ModelID modelId in System.Enum.GetValues(typeof(ModelID))) {    // TODO: Iterate through model databases instead
-
+        // Iterate through models
+        foreach(ModelID modelId in System.Enum.GetValues(typeof(ModelID))) {
             if (modelId == ModelID.EndEnum)
             {
                 break;
@@ -120,10 +116,6 @@ public class ModelSelectCircle : MonoBehaviour
             );
             // newLegsPos.GetComponentInChildren<MeshRenderer>().transform.Translate( new Vector3(0,0,radius) );   // TEMP?
             newLegsPos.transform.Rotate( new Vector3(0,rotationPositioner,0), Space.Self );                     // Rotation on the circle
-
-            
-            // TODO: Set model data and stuff, store in data structures of some sort prob
-
 
             rotationPositioner += ROTATION_ANGLE;
 
@@ -217,8 +209,9 @@ public class ModelSelectCircle : MonoBehaviour
         headCircle.transform.Rotate( new Vector3(0,positioner,0), Space.Self );
 
         // Set the current part to the next or previous part
-        // Debug.Log(currentHead.ToString());
-        currentHead = SetCurrentModel(selectNext,currentHead);
+        do{
+            currentHead = SetCurrentModel(selectNext,currentHead);
+        }while(!headDatabase.ContainsKey(currentHead));
     }
 
     public void RotateTorso(bool selectNext)
@@ -227,7 +220,10 @@ public class ModelSelectCircle : MonoBehaviour
         torsoCircle.transform.Rotate( new Vector3(0,positioner,0), Space.Self );
 
         // Set the current part to the next or previous part
-        currentTorso = SetCurrentModel(selectNext,currentTorso);
+        do{
+            currentTorso = SetCurrentModel(selectNext,currentTorso);
+        }while(!torsoDatabase.ContainsKey(currentTorso));
+        
     }
 
     public void RotateLegs(bool selectNext)
@@ -236,14 +232,27 @@ public class ModelSelectCircle : MonoBehaviour
         legsCircle.transform.Rotate( new Vector3(0,positioner,0), Space.Self );
 
         // Set the current part to the next or previous part
-        currentLegs = SetCurrentModel(selectNext,currentLegs);
+        do{
+            currentLegs = SetCurrentModel(selectNext,currentLegs);
+        }while(!legsDatabase.ContainsKey(currentLegs));
     }
 
     public GameObject[] GetCurrentParts()
     {
         Debug.Log(string.Format("Selected head: {0}, torso: {1}, legs: {2}",
             currentHead.ToString(), currentTorso.ToString(), currentLegs.ToString()));
-        GameObject[] ret = { headDatabase[currentHead], torsoDatabase[currentTorso], legsDatabase[currentLegs] };
+
+        if(!headDatabase.ContainsKey(currentHead)){
+            Debug.LogError("No head " + currentHead.ToString() + " found in database");
+        }
+        if(!torsoDatabase.ContainsKey(currentTorso)){
+            Debug.LogError("No torso " + currentTorso.ToString() + " found in database");
+        }
+        if(!legsDatabase.ContainsKey(currentLegs)){
+            Debug.LogError("No legs " + currentLegs.ToString() + " found in database");
+        }
+
+        GameObject[] ret = { headDatabase[currentHead], torsoDatabase[currentTorso], legsDatabase[currentLegs] };        
         return ret;
     }
 
