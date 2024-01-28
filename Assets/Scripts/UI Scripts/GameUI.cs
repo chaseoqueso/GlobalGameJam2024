@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
+using TMPro;
 
 public class GameUI : MonoBehaviour
 {
@@ -19,6 +20,11 @@ public class GameUI : MonoBehaviour
     [SerializeField] private Slider chargeBar;
     [SerializeField] private Image chargeBarFill;
 
+    [SerializeField] private TMP_Text timerText;
+    [SerializeField] private TMP_Text scoreboardText;
+    
+    [SerializeField] private Slider healthBar;
+
     void Awake()
     {
         if (Instance != null && Instance != this){ 
@@ -28,20 +34,79 @@ public class GameUI : MonoBehaviour
             Instance = this;
         }
 
+        // TODO: Set default values from player info
+        // healthBar.maxValue = player.health;
+        SetHealthBar(healthBar.maxValue);
+
         SetCharge(0f);
     }
+
+    #region Health Bar
+        public void SetHealthBar(float value)
+        {
+            if(value < healthBar.value){
+                DamageFeedback();
+            }
+
+            healthBar.value = value;
+            CheckHealthStatus();
+        }
+
+        public void IncrementHealth(float value)
+        {
+            healthBar.value += value;
+        }
+
+        public void DecreaseHealth(float value)
+        {
+            healthBar.value -= value;
+            DamageFeedback();
+            CheckHealthStatus();    
+        }
+
+        private void DamageFeedback()
+        {
+            // TODO: UI feedback that the player took damage
+        }
+
+        private void CheckHealthStatus()
+        {
+            if(healthBar.value == 0){
+                // TODO: UI death stuff
+            }
+        }
+    #endregion
 
     #region Timer
         public void SetTime()
         {
-
+            timerText.text = "0" + ":" + "00";
         }
     #endregion
 
     #region Scoreboard
-        public void UpdateScoreboard()
+        // Called if YOUR place changes, or if FIRST place changes
+        public void UpdateScoreboard(string firstPlayerName, int firstScore, string secondPlayerName, int secondScore, int thisPlayersPlace)
         {
-            
+            scoreboardText.text = "1st: " + firstPlayerName + " - " + firstScore + "\n";
+
+            if(thisPlayersPlace == 1){
+                scoreboardText.text += "2nd: " + secondPlayerName;
+            }
+            else{
+                string placeStr = "" + thisPlayersPlace;
+                if( thisPlayersPlace == 2 ){
+                    placeStr += "nd: ";
+                }
+                else if( thisPlayersPlace == 3 ){
+                    placeStr += "rd: ";
+                }
+                else{
+                    placeStr += "th: ";
+                }
+
+                scoreboardText.text += placeStr + secondPlayerName + " - " + secondScore;
+            }
         }
     #endregion
 
@@ -66,7 +131,7 @@ public class GameUI : MonoBehaviour
 
         private void CheckSegment()
         {
-            chargeBarFill.color = chargeBarGradient.Evaluate(chargeBar.normalizedValue);
+            chargeBarFill.color = chargeBarGradient.Evaluate(chargeBar.value);
 
             // If we just hit max, activate the UI for it
             if(!fullChargeActive && chargeBar.value >= chargeBar.maxValue){
