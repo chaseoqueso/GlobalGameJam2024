@@ -375,8 +375,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   rb: {fileID: 0}
-  head: {fileID: 8562676562098397070, guid: e760066b8ac2a9240b49504de30cb5b2, type: 3}
-  body: {fileID: 3574100893697178977, guid: e8a9b69e25da3a847b4296f0bc76d482, type: 3}
+  score: 0
+  head: {fileID: 3817332906909080234, guid: 070281cb081ec044a9312d2b33ddf447, type: 3}
+  body: {fileID: 8819358057040038858, guid: 2eae8fbe2c986364a9e80601c7549ba4, type: 3}
   legs: {fileID: 1619505374498699180, guid: a7f155c291a38874bb037650d26031da, type: 3}
   moveSpeed: 6
   accel: 30

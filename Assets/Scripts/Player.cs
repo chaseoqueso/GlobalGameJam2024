@@ -17,7 +17,9 @@ public class Player : NetworkBehaviour
     private float respawnTimer = 5f;
     private float currRespawnTimer;
 
+    public int score = 0;
     private float recentHit = 0f;
+    private Player nemesis;  // Last player that hit you
     private float recentHitTimer = 1f;
     private float currRecentHitTimer;
 
@@ -38,13 +40,13 @@ public class Player : NetworkBehaviour
         // If this wall hit was *likely* caused by an enemy player dash
         if (isWall && recentHit > 0f)
         {
-            damage = impactSpeed * weightMod * recentHit;  //TODO: Chase can fix the formulae
+            damage = impactSpeed * weightMod * recentHit;  //TODO: Tune Me!
             recentHit = 0f;
         }
         
         else
         {
-            damage = impactSpeed * weightMod * BASE_DAMAGE;  //TODO: Chase can fix the formulae
+            damage = impactSpeed * weightMod * BASE_DAMAGE;  //TODO: Tune Me!
         }
 
         if (damage < 1f)
@@ -72,9 +74,11 @@ public class Player : NetworkBehaviour
 
     public void knockback(float impactMagnitude, Vector3 pushBackDir)
     {
+        // Tune Me!
+        float weightMod = 0.5f * (weight / 10f);
         float knockbackModifier = 1f;
 
-        Vector3 knockBackVector = impactMagnitude * knockbackModifier * pushBackDir;
+        Vector3 knockBackVector = impactMagnitude * knockbackModifier * weightMod * pushBackDir;
         horVelocity += new Vector2(knockBackVector.x, knockBackVector.z);
         verVelocity += knockBackVector.y;
     }
@@ -84,6 +88,7 @@ public class Player : NetworkBehaviour
         Debug.Log("Dead... Cue the Wilhelm Scream.");
         currRespawnTimer = respawnTimer;
         isDead = true;
+        gameObject.GetComponent<SphereCollider>().enabled = false;
     }
 
     public void respawn()
@@ -91,7 +96,17 @@ public class Player : NetworkBehaviour
         Debug.Log("Back from the grave.");
         currHealth = maxHealth;
         isDead = false;
+        gameObject.GetComponent<SphereCollider>().enabled = true;
+
         //TODO: respawn at the correct place
+        gameObject.transform.position = new Vector3(0, 10, 0);
+    }
+
+    public void loseScore()
+    {
+        score--;
+        nemesis.score++;
+        Debug.Log(string.Format("Score transfer complete. Current Score: {0}", score));
     }
     #endregion
 
@@ -134,6 +149,14 @@ public class Player : NetworkBehaviour
         Debug.Log(String.Format("Charge Up set to {0}", chargeUp));
         handling = stats[3];
         Debug.Log(String.Format("Handling set to {0}", handling));
+
+        // Speed increases or reduces base speed by up to 30%
+        float speedMod = 0.7f + 0.6f * speed;  // Tune Me!
+        moveSpeed = speedMod * moveSpeed;
+
+        // ChargeUP increases or reduces time to max charge by up to 30%
+        float chargeMod = 0.7f + 0.6f * chargeUp;  // Tune Me!
+        dashChargeTime = chargeMod * dashChargeTime;
     }
     #endregion
 
@@ -465,6 +488,7 @@ public class Player : NetworkBehaviour
             if (incomingForce > 0)
             {
                 Debug.Log("or rather, they hit us.");
+                nemesis = collidingPlayer;
                 takeDamage(incomingForce, collision.GetContact(0).normal, collidingPlayer.dashing, false);
             }
         }
@@ -477,6 +501,11 @@ public class Player : NetworkBehaviour
             {
                 Debug.Log("...hard");
                 takeDamage(collision.relativeVelocity.magnitude, collision.GetContact(0).normal, false, true);
+            }
+            else
+            {
+                //Debug.Log("Take damage anyway for testing");
+                //takeDamage(collision.relativeVelocity.magnitude, collision.GetContact(0).normal, false, true);
             }
         }
     }   
