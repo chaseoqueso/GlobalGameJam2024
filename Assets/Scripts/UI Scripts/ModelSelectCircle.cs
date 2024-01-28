@@ -37,6 +37,11 @@ public class ModelSelectCircle : MonoBehaviour
     public ModelID currentTorso {get; private set;}
     public ModelID currentLegs {get; private set;}
 
+    void Awake()
+    {
+        LoadAllModels();
+    }
+
     void Start()
     {
         currentHead = 0;
@@ -44,7 +49,7 @@ public class ModelSelectCircle : MonoBehaviour
         currentLegs = 0;
 
         // int numModels = headDatabase.Count;  // TODO (uncomment this and delete the following)
-        LoadAllModels();
+        // LoadAllModels();
 
         // Positioning everything
         int fillModels = models.Count - headDatabase.Count;
