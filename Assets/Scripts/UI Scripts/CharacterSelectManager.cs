@@ -60,13 +60,10 @@ public class CharacterSelectManager : NetworkBehaviour
     {
         playerIsReady = false;
         SetStats();
-<<<<<<< HEAD
-
+        
         DisplayNewPlayer(); // TODO: Pass in this player's info
 
         Debug.Log(GameManager.Instance.joinCode.Value);
-=======
->>>>>>> b70d94b47e6e4813e8b49a18ca7590ffccb9b81e
     }
 
     #region Display Model/Stat Stuff
