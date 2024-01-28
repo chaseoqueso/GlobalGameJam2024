@@ -19,7 +19,10 @@ public enum ModelID
     OldGod,
     Dinosaur,
     Clown,
-    Kirby,
+    Crash,
+    Gnomes,
+    Fairy,
+    FlatVillager,
     EndEnum
 }
 
