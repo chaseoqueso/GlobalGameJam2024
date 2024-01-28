@@ -134,7 +134,7 @@ public class CharacterSelectManager : NetworkBehaviour
     public override void OnNetworkSpawn()
     {
         clientsInLobby = new();
-            
+
         //Always add ourselves to the list at first
         clientsInLobby.Add(NetworkManager.LocalClientId, false);
 
@@ -146,6 +146,7 @@ public class CharacterSelectManager : NetworkBehaviour
 
             //Server will be notified when a client connects
             NetworkManager.OnClientConnectedCallback += OnClientConnectedCallback;
+            // NetworkManager.OnClientDisconnectedCallback += OnClientDisconnectedCallback; // TODO
             SceneTransitionHandler.Instance.OnClientLoadedScene += ClientLoadedScene;
         }
 
@@ -155,8 +156,12 @@ public class CharacterSelectManager : NetworkBehaviour
 
     private void GenerateUsersInLobby()
     {
-        // TODO fill the lobby UI with players
-        // lobbyPlayerPanel.PlayerIsReady(isReady);
+        ClearLobbyPanels();
+
+        // TODO
+        // foreach(Player p in NetworkManager.Instance.players){
+        //     DisplayNewPlayer(p);
+        // }
     }
 
     /// <summary>
@@ -170,12 +175,8 @@ public class CharacterSelectManager : NetworkBehaviour
         {
             if (!clientsInLobby.ContainsKey(clientId))
             {
-                allPlayersInLobby = false;
-
-                //Server will be notified when a client connects
-                NetworkManager.OnClientConnectedCallback += OnClientConnectedCallback;
-                // NetworkManager.OnClientDisconnectedCallback += OnClientDisconnectedCallback; // TODO
-                SceneTransitionHandler.Instance.OnClientLoadedScene += ClientLoadedScene;
+                clientsInLobby.Add(clientId, false);
+                GenerateUsersInLobby();
             }
 
             UpdateAndCheckPlayersInLobby();
@@ -193,6 +194,17 @@ public class CharacterSelectManager : NetworkBehaviour
         if (IsServer)
         {
             if (!clientsInLobby.ContainsKey(clientId)) clientsInLobby.Add(clientId, false);
+            GenerateUsersInLobby();
+
+            UpdateAndCheckPlayersInLobby();
+        }
+    }
+
+    private void OnClientDisconnectedCallback(ulong clientId)
+    {
+        if (IsServer)
+        {
+            if (clientsInLobby.ContainsKey(clientId)) clientsInLobby.Remove(clientId);
             GenerateUsersInLobby();
 
             UpdateAndCheckPlayersInLobby();
@@ -247,69 +259,7 @@ public class CharacterSelectManager : NetworkBehaviour
     {
         if (allPlayersInLobby)
         {
-            ClearLobbyPanels();
-            
-            // TODO
-            // foreach(Player p in NetworkManager.Instance.players){
-            //     DisplayNewPlayer(p);
-            // }
-        }
-
-        /// <summary>
-        ///     ClientLoadedScene
-        ///     Invoked when a client has loaded this scene
-        /// </summary>
-        /// <param name="clientId"></param>
-        private void ClientLoadedScene(ulong clientId)
-        {
-            if (IsServer)
-            {
-                if (!clientsInLobby.ContainsKey(clientId))
-                {
-                    clientsInLobby.Add(clientId, false);
-                    GenerateUsersInLobby();
-                }
-
-                UpdateAndCheckPlayersInLobby();
-            }
-        }
-
-        /// <summary>
-        ///     OnClientConnectedCallback
-        ///     Since we are entering a lobby and Netcode's NetworkManager is spawning the player,
-        ///     the server can be configured to only listen for connected clients at this stage.
-        /// </summary>
-        /// <param name="clientId">client that connected</param>
-        private void OnClientConnectedCallback(ulong clientId)
-        {
-            if (IsServer)
-            {
-                if (!clientsInLobby.ContainsKey(clientId)) clientsInLobby.Add(clientId, false);
-                GenerateUsersInLobby();
-
-                UpdateAndCheckPlayersInLobby();
-            }
-        }
-
-        private void OnClientDisconnectedCallback(ulong clientId)
-        {
-            if (IsServer)
-            {
-                if (clientsInLobby.ContainsKey(clientId)) clientsInLobby.Remove(clientId);
-                GenerateUsersInLobby();
-
-                UpdateAndCheckPlayersInLobby();
-            }
-        }
-
-        /// <summary>
-        ///     UpdateAndCheckPlayersInLobby
-        ///     Checks to see if we have at least 2 or more people to start
-        /// </summary>
-        private void UpdateAndCheckPlayersInLobby()
-        {
-            allPlayersInLobby = clientsInLobby.Count >= minPlayers;
-
+            var allPlayersAreReady = true;
             foreach (var clientLobbyStatus in clientsInLobby)
                 if (!clientLobbyStatus.Value)
 
@@ -361,10 +311,10 @@ public class CharacterSelectManager : NetworkBehaviour
             GenerateUsersInLobby();
         }
     }
-        
+
     public void DisplayNewPlayer(Player p) // TODO: pass in player number or Player or something
     {
-        GameObject newPanel = Instantiate(playerPanelPrefab, new Vector3(0,0,0), Quaternion.identity, lobbyPanelBackground.transform);
+        GameObject newPanel = Instantiate(playerPanelPrefab, new Vector3(0, 0, 0), Quaternion.identity, lobbyPanelBackground.transform);
         lobbyPlayerPanels.Add(newPanel);
         newPanel.GetComponent<LobbyPlayerPanel>().SetValues(p);
 
@@ -374,10 +324,10 @@ public class CharacterSelectManager : NetworkBehaviour
 
     public void ClearLobbyPanels()
     {
-        foreach( GameObject playerPanel in lobbyPlayerPanels ){
+        foreach (GameObject playerPanel in lobbyPlayerPanels)
+        {
             // TODO: DELETE THE PLAYER PANEL GAME OBJECT
         }
     }
-
     #endregion
 }
