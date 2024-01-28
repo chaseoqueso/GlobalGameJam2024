@@ -8,12 +8,28 @@ PrefabInstance:
     m_TransformParent: {fileID: 0}
     m_Modifications:
     - target: {fileID: 1029728837142846917, guid: e8a9b69e25da3a847b4296f0bc76d482, type: 3}
+      propertyPath: speed
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 1029728837142846917, guid: e8a9b69e25da3a847b4296f0bc76d482, type: 3}
+      propertyPath: weight
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 1029728837142846917, guid: e8a9b69e25da3a847b4296f0bc76d482, type: 3}
+      propertyPath: handling
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 1029728837142846917, guid: e8a9b69e25da3a847b4296f0bc76d482, type: 3}
       propertyPath: model_id
       value: 1
       objectReference: {fileID: 0}
+    - target: {fileID: 1029728837142846917, guid: e8a9b69e25da3a847b4296f0bc76d482, type: 3}
+      propertyPath: charge_up
+      value: 4
+      objectReference: {fileID: 0}
     - target: {fileID: 3574100893697178977, guid: e8a9b69e25da3a847b4296f0bc76d482, type: 3}
       propertyPath: m_Name
-      value: Shovel_Knight_Body
+      value: Shovel_Knight_Body Variant
       objectReference: {fileID: 0}
     - target: {fileID: 4238469436644370395, guid: e8a9b69e25da3a847b4296f0bc76d482, type: 3}
       propertyPath: m_RootOrder

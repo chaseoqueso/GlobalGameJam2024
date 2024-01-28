@@ -8,12 +8,28 @@ PrefabInstance:
     m_TransformParent: {fileID: 0}
     m_Modifications:
     - target: {fileID: 8166771115957109548, guid: e760066b8ac2a9240b49504de30cb5b2, type: 3}
+      propertyPath: speed
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 8166771115957109548, guid: e760066b8ac2a9240b49504de30cb5b2, type: 3}
+      propertyPath: weight
+      value: 4
+      objectReference: {fileID: 0}
+    - target: {fileID: 8166771115957109548, guid: e760066b8ac2a9240b49504de30cb5b2, type: 3}
+      propertyPath: handling
+      value: 5
+      objectReference: {fileID: 0}
+    - target: {fileID: 8166771115957109548, guid: e760066b8ac2a9240b49504de30cb5b2, type: 3}
       propertyPath: model_id
       value: 1
       objectReference: {fileID: 0}
+    - target: {fileID: 8166771115957109548, guid: e760066b8ac2a9240b49504de30cb5b2, type: 3}
+      propertyPath: charge_up
+      value: 3
+      objectReference: {fileID: 0}
     - target: {fileID: 8562676562098397070, guid: e760066b8ac2a9240b49504de30cb5b2, type: 3}
       propertyPath: m_Name
-      value: Shovel_Knight_Head
+      value: Shovel_Knight_Head Variant
       objectReference: {fileID: 0}
     - target: {fileID: 9052072917369636148, guid: e760066b8ac2a9240b49504de30cb5b2, type: 3}
       propertyPath: m_RootOrder

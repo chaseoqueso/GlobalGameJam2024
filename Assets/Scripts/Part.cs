@@ -1,6 +1,8 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Diagnostics;
 using UnityEngine;
 
 
@@ -34,20 +36,20 @@ public class Part : MonoBehaviour
     [Tooltip("Movement acceleration")]
     public float handling;
     [Tooltip("Which model part the Part represents")]
-    public ModelPart body_part;
+    public ModelPart bodyPart;
     [Tooltip("Which model the Part belongs to")]
-    public ModelID model_id;
+    public ModelID modelId;
     #endregion
 
-    // Start is called before the first frame update
-    void Start()
+    static public float[] GetCombinedStats(Part h, Part t, Part l)
     {
-        
+        float speed = (h.speed + t.speed + l.speed) / 3;
+        float weight = (h.weight + t.weight + l.weight) / 3;
+        float charge_up = (h.charge_up + t.charge_up + l.charge_up) / 3;
+        float handling = (h.handling + t.handling + l.handling) / 3;
+
+        float[] stats = { speed, weight, charge_up, handling };
+        return stats;
     }
 
-    // Update is called once per frame
-    void Update()
-    {
-        
-    }
 }

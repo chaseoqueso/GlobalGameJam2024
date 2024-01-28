@@ -8,12 +8,28 @@ PrefabInstance:
     m_TransformParent: {fileID: 0}
     m_Modifications:
     - target: {fileID: 946440810437589458, guid: a7f155c291a38874bb037650d26031da, type: 3}
+      propertyPath: speed
+      value: 4
+      objectReference: {fileID: 0}
+    - target: {fileID: 946440810437589458, guid: a7f155c291a38874bb037650d26031da, type: 3}
+      propertyPath: weight
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 946440810437589458, guid: a7f155c291a38874bb037650d26031da, type: 3}
+      propertyPath: handling
+      value: 4
+      objectReference: {fileID: 0}
+    - target: {fileID: 946440810437589458, guid: a7f155c291a38874bb037650d26031da, type: 3}
       propertyPath: model_id
       value: 1
       objectReference: {fileID: 0}
+    - target: {fileID: 946440810437589458, guid: a7f155c291a38874bb037650d26031da, type: 3}
+      propertyPath: charge_up
+      value: 3
+      objectReference: {fileID: 0}
     - target: {fileID: 1619505374498699180, guid: a7f155c291a38874bb037650d26031da, type: 3}
       propertyPath: m_Name
-      value: Shovel_Knight_Legs
+      value: Shovel_Knight_Legs Variant
       objectReference: {fileID: 0}
     - target: {fileID: 2103870566412119318, guid: a7f155c291a38874bb037650d26031da, type: 3}
       propertyPath: m_RootOrder

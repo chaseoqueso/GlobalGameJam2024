@@ -96,8 +96,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f3ee64957264bae4195c63e3b5564d7a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  speed: 4
-  weight: 2
-  charge_up: 5
-  handling: 1
+  speed: 2
+  weight: 3
+  charge_up: 7
+  handling: 2
   body_part: 0
+  model_id: 0

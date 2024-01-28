@@ -71,6 +71,10 @@ public class ModelSelectCircle : MonoBehaviour
         // for(int mID = 0; mID < (int)ModelID.EndEnum; mID++)
         foreach(ModelID modelId in System.Enum.GetValues(typeof(ModelID))) {    // TODO: Iterate through model databases instead
 
+            if (modelId == ModelID.EndEnum)
+            {
+                break;
+            }
             if (!headDatabase.ContainsKey(modelId))
             {
                 continue;
@@ -154,7 +158,7 @@ public class ModelSelectCircle : MonoBehaviour
         foreach(Object h in headList){
             GameObject head = (GameObject)h;
 
-            ModelID modelID = head.GetComponent<Part>().model_id;     // TODO: Get the ID for this model
+            ModelID modelID = head.GetComponent<Part>().modelId;     // TODO: Get the ID for this model
             
             if(headDatabase.ContainsKey( modelID )){
                     continue;
@@ -170,7 +174,7 @@ public class ModelSelectCircle : MonoBehaviour
         Debug.Log(string.Format("Loaded {0} torsos", torsoList.Length));
         foreach (Object t in torsoList){
             GameObject torso = (GameObject)t;   // Cast by ModelPart ScriptableObject type
-            ModelID modelID = torso.GetComponent<Part>().model_id;     // TODO: Get the ID for this model
+            ModelID modelID = torso.GetComponent<Part>().modelId;     // TODO: Get the ID for this model
                                                                       // 
             if (torsoDatabase.ContainsKey( modelID )){
                     continue;
@@ -186,7 +190,7 @@ public class ModelSelectCircle : MonoBehaviour
         Debug.Log(string.Format("Loaded {0} legs", legsList.Length));
         foreach (Object l in legsList){
             GameObject legs = (GameObject)l;   // Cast by ModelPart ScriptableObject type
-            ModelID modelID = legs.GetComponent<Part>().model_id;     // TODO: Get the ID for this model
+            ModelID modelID = legs.GetComponent<Part>().modelId;     // TODO: Get the ID for this model
                                                                       // 
             if (legsDatabase.ContainsKey( modelID )){
                     continue;
@@ -210,7 +214,6 @@ public class ModelSelectCircle : MonoBehaviour
         // Set the current part to the next or previous part
         // Debug.Log(currentHead.ToString());
         currentHead = SetCurrentModel(selectNext,currentHead);
-        // Debug.Log(currentHead.ToString());
     }
 
     public void RotateTorso(bool selectNext)
@@ -229,6 +232,14 @@ public class ModelSelectCircle : MonoBehaviour
 
         // Set the current part to the next or previous part
         currentLegs = SetCurrentModel(selectNext,currentLegs);
+    }
+
+    public GameObject[] GetCurrentParts()
+    {
+        Debug.Log(string.Format("Selected head: {0}, torso: {1}, legs: {2}",
+            currentHead.ToString(), currentTorso.ToString(), currentLegs.ToString()));
+        GameObject[] ret = { headDatabase[currentHead], torsoDatabase[currentTorso], legsDatabase[currentLegs] };
+        return ret;
     }
 
     private ModelID SetCurrentModel(bool selectNext, ModelID current)
