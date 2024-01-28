@@ -25,6 +25,8 @@ public class GameUI : MonoBehaviour
     
     [SerializeField] private Slider healthBar;
 
+    [SerializeField] private GameObject gameOverUI;
+
     void Awake()
     {
         if (Instance != null && Instance != this){ 
@@ -207,6 +209,15 @@ public class GameUI : MonoBehaviour
             // Make the "RAD" text look flashy
 
             fullChargeActive = set;
+        }
+    #endregion
+
+    #region Game Over UI
+        public void ToggleGameOverUI(bool set)
+        {
+            gameOverUI.SetActive(set);
+
+            // TODO: Buttons only visible - or at least only interactable - for host
         }
     #endregion
 }
