@@ -50,6 +50,7 @@ public class CharacterSelectManager : NetworkBehaviour
     [SerializeField] private GameObject playerPanelPrefab;
     [SerializeField] private Sprite readyButtonSprite;
     [SerializeField] private Sprite cancelButtonSprite;
+    [SerializeField] private TMP_Text joinCodeText;
 
     private HashSet<GameObject> lobbyPlayerPanels = new HashSet<GameObject>();
     
@@ -61,9 +62,9 @@ public class CharacterSelectManager : NetworkBehaviour
         playerIsReady = false;
         SetStats();
         
-        DisplayNewPlayer(); // TODO: Pass in this player's info
+        // DisplayNewPlayer(); // TODO: Pass in this player's info
 
-        Debug.Log(GameManager.Instance.joinCode.Value);
+        joinCodeText.text = GameManager.Instance.joinCode.Value;
     }
 
     #region Display Model/Stat Stuff
