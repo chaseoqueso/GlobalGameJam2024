@@ -5,21 +5,6 @@ using UnityEngine.UI;
 using TMPro;
 using Unity.Netcode;
 
-// public enum ModelPart{
-//     Head,   // 0
-//     Torso,  // 1
-//     Legs    // 2
-// }
-
-public enum ModelID{
-    ShovelKnight,
-    OldGod,
-    Dinosaur,
-    Clown,
-    flatMinecraft,
-    Kirby,
-    EndEnum
-}
 
 public class CharacterSelectManager : NetworkBehaviour
 {
@@ -68,276 +53,281 @@ public class CharacterSelectManager : NetworkBehaviour
     }
 
     #region Display Model/Stat Stuff
-        public void RotateHead(bool selectNext)
-        {
-            modelSelectCircle.RotateHead(selectNext);
-            SetStats();
-        }
+    public void RotateHead(bool selectNext)
+    {
+        modelSelectCircle.RotateHead(selectNext);
+        SetStats();
+    }
 
-        public void RotateTorso(bool selectNext)
-        {
-            modelSelectCircle.RotateTorso(selectNext);
-            SetStats();
-        }
+    public void RotateTorso(bool selectNext)
+    {
+        modelSelectCircle.RotateTorso(selectNext);
+        SetStats();
+    }
 
-        public void RotateLegs(bool selectNext)
-        {
-            modelSelectCircle.RotateLegs(selectNext);
-            SetStats();
-        }
+    public void RotateLegs(bool selectNext)
+    {
+        modelSelectCircle.RotateLegs(selectNext);
+        SetStats();
+    }
 
-        private void SetStats()
-        {
-            // TODO: Display the stats of the current character
+    private void SetStats()
+    {
+        GameObject[] selectedParts = modelSelectCircle.GetCurrentParts();
+        float[] stats = Part.GetCombinedStats(
+            selectedParts[0].GetComponent<Part>(), 
+            selectedParts[1].GetComponent<Part>(),
+            selectedParts[2].GetComponent<Part>()
+        );
 
-            // TEMP for visualization purposes
-            speedSlider.value = Random.Range(1,10f);
-            weightSlider.value = Random.Range(1,10f);
-            handlingSlider.value = Random.Range(1,10f);
-            chargeSlider.value = Random.Range(1,10f);
-        }
+        speedSlider.value = stats[0];
+        weightSlider.value = stats[1];
+        handlingSlider.value = stats[2];
+        chargeSlider.value = stats[3];
+    }
     #endregion
 
     #region Interactables
-        public void ReadyButton()
-        {
-            // If the player is cancelling Ready, return to interactable UI
-            ToggleInteractableUI(playerIsReady);
-            playerIsReady = !playerIsReady;
+    public void ReadyButton()
+    {
+        // If the player is cancelling Ready, return to interactable UI
+        ToggleInteractableUI(playerIsReady);
+        playerIsReady = !playerIsReady;
 
-            if(playerIsReady){
-                readyText.text = "CANCEL";
-                readyButton.image.sprite = cancelButtonSprite;
-            }
-            else{
-                readyText.text = "READY";
-                readyButton.image.sprite = readyButtonSprite;
-            }
-
-            PlayerIsReady(playerIsReady);
+        if(playerIsReady){
+            readyText.text = "CANCEL";
+            readyButton.image.sprite = cancelButtonSprite;
+        }
+        else{
+            readyText.text = "READY";
+            readyButton.image.sprite = readyButtonSprite;
         }
 
-        private void ToggleInteractableUI(bool toggle)
-        {
-            nextArrowPanel.SetActive(toggle);
-            previousArrowPanel.SetActive(toggle);
-            quitButton.interactable = toggle;
-            randomizeButton.interactable = toggle;
-        }
+        PlayerIsReady(playerIsReady);
+    }
 
-        public void RandomizeButton()
-        {
-            int headValue = Random.Range(0,(int)ModelID.EndEnum);
-            int torsoValue = Random.Range(0,(int)ModelID.EndEnum);
-            int legsValue = Random.Range(0,(int)ModelID.EndEnum);
+    private void ToggleInteractableUI(bool toggle)
+    {
+        nextArrowPanel.SetActive(toggle);
+        previousArrowPanel.SetActive(toggle);
+        quitButton.interactable = toggle;
+        randomizeButton.interactable = toggle;
+    }
 
-            // TODO: Rotate to these immediately
-        }
+    public void RandomizeButton()
+    {
+        int headValue = Random.Range(0,(int)ModelID.EndEnum);
+        int torsoValue = Random.Range(0,(int)ModelID.EndEnum);
+        int legsValue = Random.Range(0,(int)ModelID.EndEnum);
 
-        public void QuitButton()
-        {
-            // TODO: Alert server you left the lobby - tell all the clients to remove this player - and return to main menu
-        }
+        // TODO: Rotate to these immediately
+    }
+
+    public void QuitButton()
+    {
+        // TODO: Alert server you left the lobby - tell all the clients to remove this player - and return to main menu
+    }
     #endregion
 
     #region Lobby Stuff
 
-        public override void OnNetworkSpawn()
+    public override void OnNetworkSpawn()
+    {
+        clientsInLobby = new();
+
+        //Always add ourselves to the list at first
+        clientsInLobby.Add(NetworkManager.LocalClientId, false);
+
+        //If we are hosting, then handle the server side for detecting when clients have connected
+        //and when their lobby scenes are finished loading.
+        if (IsServer)
         {
-            clientsInLobby = new();
-            
-            //Always add ourselves to the list at first
-            clientsInLobby.Add(NetworkManager.LocalClientId, false);
+            allPlayersInLobby = false;
 
-            //If we are hosting, then handle the server side for detecting when clients have connected
-            //and when their lobby scenes are finished loading.
-            if (IsServer)
+            //Server will be notified when a client connects
+            NetworkManager.OnClientConnectedCallback += OnClientConnectedCallback;
+            // NetworkManager.OnClientDisconnectedCallback += OnClientDisconnectedCallback; // TODO
+            SceneTransitionHandler.Instance.OnClientLoadedScene += ClientLoadedScene;
+        }
+
+        //Update our lobby
+        GenerateUsersInLobby();
+    }
+
+    private void GenerateUsersInLobby()
+    {
+        ClearLobbyPanels();
+
+        // TODO
+        // foreach(Player p in NetworkManager.Instance.players){
+        //     DisplayNewPlayer(p);
+        // }
+    }
+
+    /// <summary>
+    ///     ClientLoadedScene
+    ///     Invoked when a client has loaded this scene
+    /// </summary>
+    /// <param name="clientId"></param>
+    private void ClientLoadedScene(ulong clientId)
+    {
+        if (IsServer)
+        {
+            if (!clientsInLobby.ContainsKey(clientId))
             {
-                allPlayersInLobby = false;
-
-                //Server will be notified when a client connects
-                NetworkManager.OnClientConnectedCallback += OnClientConnectedCallback;
-                // NetworkManager.OnClientDisconnectedCallback += OnClientDisconnectedCallback; // TODO
-                SceneTransitionHandler.Instance.OnClientLoadedScene += ClientLoadedScene;
+                clientsInLobby.Add(clientId, false);
+                GenerateUsersInLobby();
             }
 
-            //Update our lobby
+            UpdateAndCheckPlayersInLobby();
+        }
+    }
+
+    /// <summary>
+    ///     OnClientConnectedCallback
+    ///     Since we are entering a lobby and Netcode's NetworkManager is spawning the player,
+    ///     the server can be configured to only listen for connected clients at this stage.
+    /// </summary>
+    /// <param name="clientId">client that connected</param>
+    private void OnClientConnectedCallback(ulong clientId)
+    {
+        if (IsServer)
+        {
+            if (!clientsInLobby.ContainsKey(clientId)) clientsInLobby.Add(clientId, false);
+            GenerateUsersInLobby();
+
+            UpdateAndCheckPlayersInLobby();
+        }
+    }
+
+    private void OnClientDisconnectedCallback(ulong clientId)
+    {
+        if (IsServer)
+        {
+            if (clientsInLobby.ContainsKey(clientId)) clientsInLobby.Remove(clientId);
+            GenerateUsersInLobby();
+
+            UpdateAndCheckPlayersInLobby();
+        }
+    }
+
+    /// <summary>
+    ///     UpdateAndCheckPlayersInLobby
+    ///     Checks to see if we have at least 2 or more people to start
+    /// </summary>
+    private void UpdateAndCheckPlayersInLobby()
+    {
+        allPlayersInLobby = clientsInLobby.Count >= minPlayers;
+
+        foreach (var clientLobbyStatus in clientsInLobby)
+        {
+            SendClientReadyStatusUpdatesClientRpc(clientLobbyStatus.Key, clientLobbyStatus.Value);
+            if (!NetworkManager.Singleton.ConnectedClients.ContainsKey(clientLobbyStatus.Key))
+
+                //If some clients are still loading into the lobby scene then this is false
+                allPlayersInLobby = false;
+        }
+
+        CheckForAllPlayersReady();
+    }
+
+    /// <summary>
+    ///     SendClientReadyStatusUpdatesClientRpc
+    ///     Sent from the server to the client when a player's status is updated.
+    ///     This also populates the connected clients' (excluding host) player state in the lobby
+    /// </summary>
+    /// <param name="clientId"></param>
+    /// <param name="isReady"></param>
+    [ClientRpc]
+    private void SendClientReadyStatusUpdatesClientRpc(ulong clientId, bool isReady)
+    {
+        if (!IsServer)
+        {
+            if (!clientsInLobby.ContainsKey(clientId))
+                clientsInLobby.Add(clientId, isReady);
+            else
+                clientsInLobby[clientId] = isReady;
             GenerateUsersInLobby();
         }
+    }
 
-        private void GenerateUsersInLobby()
+    /// <summary>
+    ///     CheckForAllPlayersReady
+    ///     Checks to see if all players are ready, and if so launches the game
+    /// </summary>
+    private void CheckForAllPlayersReady()
+    {
+        if (allPlayersInLobby)
         {
-            ClearLobbyPanels();
-            
-            // TODO
-            // foreach(Player p in NetworkManager.Instance.players){
-            //     DisplayNewPlayer(p);
-            // }
-        }
-
-        /// <summary>
-        ///     ClientLoadedScene
-        ///     Invoked when a client has loaded this scene
-        /// </summary>
-        /// <param name="clientId"></param>
-        private void ClientLoadedScene(ulong clientId)
-        {
-            if (IsServer)
-            {
-                if (!clientsInLobby.ContainsKey(clientId))
-                {
-                    clientsInLobby.Add(clientId, false);
-                    GenerateUsersInLobby();
-                }
-
-                UpdateAndCheckPlayersInLobby();
-            }
-        }
-
-        /// <summary>
-        ///     OnClientConnectedCallback
-        ///     Since we are entering a lobby and Netcode's NetworkManager is spawning the player,
-        ///     the server can be configured to only listen for connected clients at this stage.
-        /// </summary>
-        /// <param name="clientId">client that connected</param>
-        private void OnClientConnectedCallback(ulong clientId)
-        {
-            if (IsServer)
-            {
-                if (!clientsInLobby.ContainsKey(clientId)) clientsInLobby.Add(clientId, false);
-                GenerateUsersInLobby();
-
-                UpdateAndCheckPlayersInLobby();
-            }
-        }
-
-        private void OnClientDisconnectedCallback(ulong clientId)
-        {
-            if (IsServer)
-            {
-                if (clientsInLobby.ContainsKey(clientId)) clientsInLobby.Remove(clientId);
-                GenerateUsersInLobby();
-
-                UpdateAndCheckPlayersInLobby();
-            }
-        }
-
-        /// <summary>
-        ///     UpdateAndCheckPlayersInLobby
-        ///     Checks to see if we have at least 2 or more people to start
-        /// </summary>
-        private void UpdateAndCheckPlayersInLobby()
-        {
-            allPlayersInLobby = clientsInLobby.Count >= minPlayers;
-
+            var allPlayersAreReady = true;
             foreach (var clientLobbyStatus in clientsInLobby)
-            {
-                SendClientReadyStatusUpdatesClientRpc(clientLobbyStatus.Key, clientLobbyStatus.Value);
-                if (!NetworkManager.Singleton.ConnectedClients.ContainsKey(clientLobbyStatus.Key))
+                if (!clientLobbyStatus.Value)
 
                     //If some clients are still loading into the lobby scene then this is false
-                    allPlayersInLobby = false;
-            }
+                    allPlayersAreReady = false;
 
-            CheckForAllPlayersReady();
-        }
-
-        /// <summary>
-        ///     SendClientReadyStatusUpdatesClientRpc
-        ///     Sent from the server to the client when a player's status is updated.
-        ///     This also populates the connected clients' (excluding host) player state in the lobby
-        /// </summary>
-        /// <param name="clientId"></param>
-        /// <param name="isReady"></param>
-        [ClientRpc]
-        private void SendClientReadyStatusUpdatesClientRpc(ulong clientId, bool isReady)
-        {
-            if (!IsServer)
+            //Only if all players are ready
+            if (allPlayersAreReady)
             {
-                if (!clientsInLobby.ContainsKey(clientId))
-                    clientsInLobby.Add(clientId, isReady);
-                else
-                    clientsInLobby[clientId] = isReady;
-                GenerateUsersInLobby();
+                //Remove our client connected callback
+                NetworkManager.Singleton.OnClientConnectedCallback -= OnClientConnectedCallback;
+
+                //Remove our scene loaded callback
+                SceneTransitionHandler.Instance.OnClientLoadedScene -= ClientLoadedScene;
+
+                //Transition to the ingame scene
+                SceneTransitionHandler.Instance.SwitchScene(SceneTransitionHandler.SceneStates.Ingame);
             }
         }
+    }
 
-        /// <summary>
-        ///     CheckForAllPlayersReady
-        ///     Checks to see if all players are ready, and if so launches the game
-        /// </summary>
-        private void CheckForAllPlayersReady()
+    private void PlayerIsReady(bool isReady)
+    {
+        clientsInLobby[NetworkManager.Singleton.LocalClientId] = isReady;
+        if (IsServer)
         {
-            if (allPlayersInLobby)
-            {
-                var allPlayersAreReady = true;
-                foreach (var clientLobbyStatus in clientsInLobby)
-                    if (!clientLobbyStatus.Value)
-
-                        //If some clients are still loading into the lobby scene then this is false
-                        allPlayersAreReady = false;
-
-                //Only if all players are ready
-                if (allPlayersAreReady)
-                {
-                    //Remove our client connected callback
-                    NetworkManager.Singleton.OnClientConnectedCallback -= OnClientConnectedCallback;
-
-                    //Remove our scene loaded callback
-                    SceneTransitionHandler.Instance.OnClientLoadedScene -= ClientLoadedScene;
-
-                    //Transition to the ingame scene
-                    SceneTransitionHandler.Instance.SwitchScene(SceneTransitionHandler.SceneStates.Ingame);
-                }
-            }
+            UpdateAndCheckPlayersInLobby();
+        }
+        else
+        {
+            OnClientIsReadyServerRpc(NetworkManager.Singleton.LocalClientId, isReady);
         }
 
-        private void PlayerIsReady(bool isReady)
-        {
-            clientsInLobby[NetworkManager.Singleton.LocalClientId] = isReady;
-            if (IsServer)
-            {
-                UpdateAndCheckPlayersInLobby();
-            }
-            else
-            {
-                OnClientIsReadyServerRpc(NetworkManager.Singleton.LocalClientId, isReady);
-            }
+        GenerateUsersInLobby();
+    }
 
+    /// <summary>
+    ///     OnClientIsReadyServerRpc
+    ///     Sent to the server when the player clicks the ready button
+    /// </summary>
+    /// <param name="clientid">clientId that is ready</param>
+    [ServerRpc(RequireOwnership = false)]
+    private void OnClientIsReadyServerRpc(ulong clientid, bool isReady)
+    {
+        if (clientsInLobby.ContainsKey(clientid))
+        {
+            clientsInLobby[clientid] = isReady;
+            UpdateAndCheckPlayersInLobby();
             GenerateUsersInLobby();
         }
+    }
 
-        /// <summary>
-        ///     OnClientIsReadyServerRpc
-        ///     Sent to the server when the player clicks the ready button
-        /// </summary>
-        /// <param name="clientid">clientId that is ready</param>
-        [ServerRpc(RequireOwnership = false)]
-        private void OnClientIsReadyServerRpc(ulong clientid, bool isReady)
-        {
-            if (clientsInLobby.ContainsKey(clientid))
-            {
-                clientsInLobby[clientid] = isReady;
-                UpdateAndCheckPlayersInLobby();
-                GenerateUsersInLobby();
-            }
-        }
-        
-        public void DisplayNewPlayer(Player p) // TODO: pass in player number or Player or something
-        {
-            GameObject newPanel = Instantiate(playerPanelPrefab, new Vector3(0,0,0), Quaternion.identity, lobbyPanelBackground.transform);
-            lobbyPlayerPanels.Add(newPanel);
-            newPanel.GetComponent<LobbyPlayerPanel>().SetValues(p);
+    public void DisplayNewPlayer(Player p) // TODO: pass in player number or Player or something
+    {
+        GameObject newPanel = Instantiate(playerPanelPrefab, new Vector3(0, 0, 0), Quaternion.identity, lobbyPanelBackground.transform);
+        lobbyPlayerPanels.Add(newPanel);
+        newPanel.GetComponent<LobbyPlayerPanel>().SetValues(p);
 
-            // if player is ready
-            // newPanel.GetComponent<lobbyPlayerPanel>().PlayerIsReady(true);
-        }
+        // if player is ready
+        // newPanel.GetComponent<lobbyPlayerPanel>().PlayerIsReady(true);
+    }
 
-        public void ClearLobbyPanels()
+    public void ClearLobbyPanels()
+    {
+        foreach (GameObject playerPanel in lobbyPlayerPanels)
         {
-            foreach( GameObject playerPanel in lobbyPlayerPanels ){
-                // TODO: DELETE THE PLAYER PANEL GAME OBJECT
-            }
+            // TODO: DELETE THE PLAYER PANEL GAME OBJECT
         }
+    }
     #endregion
 }

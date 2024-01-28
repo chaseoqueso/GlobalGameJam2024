@@ -3,9 +3,141 @@ using UnityEngine;
 using UnityEngine.InputSystem;
 using Cinemachine;
 using System;
+using System.Collections.Specialized;
 
 public class Player : NetworkBehaviour
 {
+    [HideInInspector] public Rigidbody rb;
+
+    #region Stats
+    private float maxHealth = 100f;
+    private float currHealth;
+
+    private bool isDead = false;
+    private float respawnTimer = 5f;
+    private float currRespawnTimer;
+
+    private float recentHit = 0f;
+    private float recentHitTimer = 1f;
+    private float currRecentHitTimer;
+
+    private float speed;
+    private float weight;
+    private float chargeUp;
+    private float handling;
+
+    private float BASE_DAMAGE = 10f;  // Tuning lever for damage
+
+
+    public void takeDamage(float impactSpeed, Vector3 direction, bool isDashHit, bool isWall)
+    {
+        // Weight reduces damage up to 50%.
+        float weightMod = 0.5f * (weight / 10f);
+        float damage = 0f;
+
+        // If this wall hit was *likely* caused by an enemy player dash
+        if (isWall && recentHit > 0f)
+        {
+            damage = impactSpeed * weightMod * recentHit;  //TODO: Chase can fix the formulae
+            recentHit = 0f;
+        }
+        
+        else
+        {
+            damage = impactSpeed * weightMod * BASE_DAMAGE;  //TODO: Chase can fix the formulae
+        }
+
+        if (damage < 1f)
+        {
+            return;
+        }
+        currHealth -= damage;
+
+        Debug.Log(string.Format("Took {0} damage. Health left: {1}", damage, currHealth));
+        knockback(impactSpeed, direction);
+
+
+        // If this is a dash hit, set recentHit so we can use it in case the player collides with a wall
+        if (isDashHit)
+        {
+            recentHit = damage;
+            currRecentHitTimer = recentHitTimer;
+        }
+
+        if (currHealth <= 0)
+        {
+            die();
+        }
+    }
+
+    public void knockback(float impactMagnitude, Vector3 pushBackDir)
+    {
+        float knockbackModifier = 1f;
+
+        Vector3 knockBackVector = impactMagnitude * knockbackModifier * pushBackDir;
+        horVelocity += new Vector2(knockBackVector.x, knockBackVector.z);
+        verVelocity += knockBackVector.y;
+    }
+
+    public void die()
+    {
+        Debug.Log("Dead... Cue the Wilhelm Scream.");
+        currRespawnTimer = respawnTimer;
+        isDead = true;
+    }
+
+    public void respawn()
+    {
+        Debug.Log("Back from the grave.");
+        currHealth = maxHealth;
+        isDead = false;
+        //TODO: respawn at the correct place
+    }
+    #endregion
+
+    #region CharacterParts
+    public GameObject head;
+    public GameObject body;
+    public GameObject legs;
+
+    private void InstantiateParts()
+    {
+        Transform head_slot = model.transform.GetChild(0);
+        GameObject headObject = Instantiate(head, head.transform.position + 10 * Vector3.up, head.transform.rotation);
+        headObject.transform.parent = head_slot;
+        Debug.Log(headObject.transform.position);
+
+        Transform body_slot = model.transform.GetChild(1);
+        GameObject bodyObject = Instantiate(body, body.transform.position + 10 * Vector3.up, body.transform.rotation);
+        bodyObject.transform.parent = body_slot;
+        Debug.Log(bodyObject.transform.position);
+
+        Transform legs_slot = model.transform.GetChild(2);
+        GameObject legsObject = Instantiate(legs, legs.transform.position + 10 * Vector3.up, legs.transform.rotation);
+        legsObject.transform.parent = legs_slot;
+        Debug.Log(legsObject.transform.position);
+    }
+
+    private void GenerateStats()
+    {
+        Part head_stats = head.GetComponent<Part>();
+        Part body_stats = body.GetComponent<Part>();
+        Part legs_stats = legs.GetComponent<Part>();
+
+        float[] stats = Part.GetCombinedStats(head_stats, body_stats, legs_stats);
+
+        speed = stats[0];
+        Debug.Log(String.Format("Speed set to {0}", speed));
+        weight = stats[1];
+        Debug.Log(String.Format("Weight set to {0}", weight));
+        chargeUp = stats[2];
+        Debug.Log(String.Format("Charge Up set to {0}", chargeUp));
+        handling = stats[3];
+        Debug.Log(String.Format("Handling set to {0}", handling));
+    }
+    #endregion
+
+    #region PlayerMovement
     [Header("Movement")]
     [Tooltip("The max movement speed when not dashing.")]
     public float moveSpeed;
@@ -40,8 +172,6 @@ public class Player : NetworkBehaviour
     [Tooltip("The spin speed (rotations per second) when dashing.")]
     public float dashingSpinSpeed;
 
-    [HideInInspector] public Rigidbody rb;
-
     private Vector2 moveInput;
     private Vector2 oldMoveInput;
     private bool firePressed;
@@ -74,10 +204,15 @@ public class Player : NetworkBehaviour
     }
     private float maxDashAmount;
     private bool dashing;
+    #endregion
 
     void Awake()
     {
         rb = GetComponent<Rigidbody>();
+        InstantiateParts();
+        GenerateStats();
+
+        currHealth = maxHealth;
     }
 
     void Start()
@@ -169,6 +304,25 @@ public class Player : NetworkBehaviour
 
     private void FixedUpdateServer()
     {
+        if (isDead)
+        {
+            currRespawnTimer -= Time.deltaTime;
+            if (currRespawnTimer <= 0)
+            {
+                respawn();
+            }
+            return;  //No shenanigans if you're dead
+        }
+
+        if (recentHit != 0f)
+        {
+            currRecentHitTimer -= Time.deltaTime;
+            if (currRecentHitTimer <= 0)
+            {
+                recentHit = 0f;
+            }
+        }
+
         if(dashing)
         {
             velocity += dashDirection.normalized * dashAccel * Time.fixedDeltaTime;
@@ -297,8 +451,37 @@ public class Player : NetworkBehaviour
         {
             horVelocity = Vector3.Reflect(horVelocity.normalized, collision.GetContact(0).normal) * horVelocity.magnitude * 0.6f;
         }
-    }
 
+        // Hit a player
+        Player collidingPlayer = collision.gameObject.GetComponent<Player>();
+        if (collidingPlayer != null)
+        {
+            Debug.Log("Hit a player");
+            Vector3 collidingPlayerVelocity = collidingPlayer.GetComponent<Rigidbody>().velocity;
+
+            // Get the speed of the colliding player in the direction of *this* player
+            float incomingForce = Vector3.Dot(collidingPlayerVelocity, collision.GetContact(0).normal);
+
+            if (incomingForce > 0)
+            {
+                Debug.Log("or rather, they hit us.");
+                takeDamage(incomingForce, collision.GetContact(0).normal, collidingPlayer.dashing, false);
+            }
+        }
+
+        // Hit a wall
+        else
+        {
+            Debug.Log("Hit a wall");
+            if (recentHit > 0)
+            {
+                Debug.Log("...hard");
+                takeDamage(collision.relativeVelocity.magnitude, collision.GetContact(0).normal, false, true);
+            }
+        }
+    }   
+
+    #region Server
     [ServerRpc]
     private void MoveInputServerRpc(Vector2 input)
     {
@@ -316,4 +499,5 @@ public class Player : NetworkBehaviour
     {
         lookDirection = dir;
     }
+    #endregion
 }
