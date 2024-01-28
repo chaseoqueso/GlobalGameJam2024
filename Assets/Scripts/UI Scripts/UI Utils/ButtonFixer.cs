@@ -20,6 +20,11 @@ public class ButtonFixer : MonoBehaviour, IPointerEnterHandler, IDeselectHandler
         }
     }
 
+    // public void OnPointerExit(PointerEventData eventData)
+    // {
+    //     this.GetComponent<Selectable>().OnPointerExit(null);
+    // }
+
     // public void OnPointerClick(PointerEventData eventData)
     // {
     //     TriggerClickSFX();

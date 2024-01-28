@@ -16,6 +16,7 @@ public enum ModelID{
     OldGod,
     Dinosaur,
     Clown,
+    flatMinecraft,
     Kirby,
     EndEnum
 }
@@ -49,6 +50,9 @@ public class CharacterSelectManager : NetworkBehaviour
     [SerializeField] private GameObject playerPanelPrefab;
     [SerializeField] private Sprite readyButtonSprite;
     [SerializeField] private Sprite cancelButtonSprite;
+    [SerializeField] private TMP_Text joinCodeText;
+
+    private HashSet<GameObject> lobbyPlayerPanels = new HashSet<GameObject>();
     
     private bool allPlayersInLobby;
     private Dictionary<ulong, bool> clientsInLobby;
@@ -56,10 +60,11 @@ public class CharacterSelectManager : NetworkBehaviour
     void Start()
     {
         playerIsReady = false;
-
         SetStats();
+        
+        // DisplayNewPlayer(); // TODO: Pass in this player's info
 
-        DisplayNewPlayer(); // TODO: Pass in this player's info
+        joinCodeText.text = GameManager.Instance.joinCode.Value;
     }
 
     #region Display Model/Stat Stuff
@@ -152,6 +157,7 @@ public class CharacterSelectManager : NetworkBehaviour
 
                 //Server will be notified when a client connects
                 NetworkManager.OnClientConnectedCallback += OnClientConnectedCallback;
+                // NetworkManager.OnClientDisconnectedCallback += OnClientDisconnectedCallback; // TODO
                 SceneTransitionHandler.Instance.OnClientLoadedScene += ClientLoadedScene;
             }
 
@@ -161,8 +167,12 @@ public class CharacterSelectManager : NetworkBehaviour
 
         private void GenerateUsersInLobby()
         {
-            // TODO fill the lobby UI with players
-            // lobbyPlayerPanel.PlayerIsReady(isReady);
+            ClearLobbyPanels();
+            
+            // TODO
+            // foreach(Player p in NetworkManager.Instance.players){
+            //     DisplayNewPlayer(p);
+            // }
         }
 
         /// <summary>
@@ -195,6 +205,17 @@ public class CharacterSelectManager : NetworkBehaviour
             if (IsServer)
             {
                 if (!clientsInLobby.ContainsKey(clientId)) clientsInLobby.Add(clientId, false);
+                GenerateUsersInLobby();
+
+                UpdateAndCheckPlayersInLobby();
+            }
+        }
+
+        private void OnClientDisconnectedCallback(ulong clientId)
+        {
+            if (IsServer)
+            {
+                if (clientsInLobby.ContainsKey(clientId)) clientsInLobby.Remove(clientId);
                 GenerateUsersInLobby();
 
                 UpdateAndCheckPlayersInLobby();
@@ -302,16 +323,21 @@ public class CharacterSelectManager : NetworkBehaviour
             }
         }
         
-        public void DisplayNewPlayer() // TODO: pass in player number or Player or something
+        public void DisplayNewPlayer(Player p) // TODO: pass in player number or Player or something
         {
-            Instantiate(playerPanelPrefab, new Vector3(0,0,0), Quaternion.identity, lobbyPanelBackground.transform);
+            GameObject newPanel = Instantiate(playerPanelPrefab, new Vector3(0,0,0), Quaternion.identity, lobbyPanelBackground.transform);
+            lobbyPlayerPanels.Add(newPanel);
+            newPanel.GetComponent<LobbyPlayerPanel>().SetValues(p);
 
-            // TODO: Player name and a tiny camera window of their character or at least the head
+            // if player is ready
+            // newPanel.GetComponent<lobbyPlayerPanel>().PlayerIsReady(true);
         }
 
-        public void RemovePlayer() // TODO: pass in player number or Player or something
+        public void ClearLobbyPanels()
         {
-            // TODO: Delete that panel
+            foreach( GameObject playerPanel in lobbyPlayerPanels ){
+                // TODO: DELETE THE PLAYER PANEL GAME OBJECT
+            }
         }
     #endregion
 }

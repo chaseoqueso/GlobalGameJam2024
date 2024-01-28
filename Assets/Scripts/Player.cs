@@ -67,7 +67,7 @@ public class Player : NetworkBehaviour
     private Vector3 oldLookDirection;
 
     private Vector3 dashDirection;
-    private NetworkVariable<float> DashAmount;
+    private NetworkVariable<float> DashAmount = new();
     private float dashAmount {
         get => DashAmount.Value;
         set => DashAmount.Value = value;
