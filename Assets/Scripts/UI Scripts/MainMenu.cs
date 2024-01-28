@@ -35,8 +35,8 @@ public class MainMenu : MonoBehaviour
         networkManager = NetworkManager.Singleton;
         startServerButtonText = startButton.GetComponentInChildren<TMP_Text>();
 
-        IPInputField.text = connectAddress;
-        portInputField.text = portString;
+        // IPInputField.text = connectAddress;
+        // portInputField.text = portString;
     }
     
     void Start()
@@ -63,84 +63,125 @@ public class MainMenu : MonoBehaviour
         // Do Stuff
     }
 
-    bool SetConnectionData()
-    {
-        connectAddress = SanitizeInput(IPInputField.text);
-        portString = SanitizeInput(IPInputField.text);
+    // bool SetConnectionData()
+    // {
+    //     connectAddress = SanitizeInput(IPInputField.text);
+    //     portString = SanitizeInput(IPInputField.text);
 
-        if (connectAddress == "")
-        {
-            menuStatusText.text = "IP Address Invalid";
-            StopAllCoroutines();
-            StartCoroutine(ShowInvalidInputStatus());
-            return false;
-        }
+    //     if (connectAddress == "")
+    //     {
+    //         menuStatusText.text = "IP Address Invalid";
+    //         StopAllCoroutines();
+    //         StartCoroutine(ShowInvalidInputStatus());
+    //         return false;
+    //     }
         
-        if (portString == "")
-        {
-            menuStatusText.text = "Port Invalid";
-            StopAllCoroutines();
-            StartCoroutine(ShowInvalidInputStatus());
-            return false;
-        }
+    //     if (portString == "")
+    //     {
+    //         menuStatusText.text = "Port Invalid";
+    //         StopAllCoroutines();
+    //         StartCoroutine(ShowInvalidInputStatus());
+    //         return false;
+    //     }
 
-        if (ushort.TryParse(portString, out ushort port))
-        {
-            networkTransport.SetConnectionData(connectAddress, port);
-        }
-        else
-        {
-            networkTransport.SetConnectionData(connectAddress, 7777);
-        }
-        return true;
-    }
+    //     if (ushort.TryParse(portString, out ushort port))
+    //     {
+    //         networkTransport.SetConnectionData(connectAddress, port);
+    //     }
+    //     else
+    //     {
+    //         networkTransport.SetConnectionData(connectAddress, 7777);
+    //     }
+    //     return true;
+    // }
 
-    public void NetworkMenuHost()
-    {
-        networkMode = NetworkMode.Host;
-        startServerButtonText.text = "Host";
-    }
+    // public void NetworkMenuHost()
+    // {
+    //     networkMode = NetworkMode.Host;
+    //     startServerButtonText.text = "Host";
+    // }
 
-    public void NetworkMenuClient()
-    {
-        networkMode = NetworkMode.Client;
-        startServerButtonText.text = "Join";
-    }
+    // public void NetworkMenuClient()
+    // {
+    //     networkMode = NetworkMode.Client;
+    //     startServerButtonText.text = "Join";
+    // }
 
-    public void StartNetworkButton()
-    {
-        if(networkMode == NetworkMode.Host)
-        {
-            StartHost();
-        }
-        else
-        {
-            TryJoinGame();
-        }
-    }
+    // public void StartNetworkButton()
+    // {
+    //     if(networkMode == NetworkMode.Host)
+    //     {
+    //         StartHost();
+    //     }
+    //     else
+    //     {
+    //         TryJoinGame();
+    //     }
+    // }
     
     public void BackButton()
     {
         networkManager.Shutdown();
     }
 
-    private void StartHost()
+    public async void StartHost()
     {
-        if (SetConnectionData() && NetworkManager.Singleton.StartHost())
+        Debug.Log("Starting Host");
+        Debug.Log(NetworkManager.Singleton);
+        Debug.Log(NetworkManager.Singleton.GetComponent<RelayManager>());
+        RelayManager relayManager = NetworkManager.Singleton.GetComponent<RelayManager>();
+        Debug.Log(relayManager);
+        if(relayManager.IsRelayEnabled)
         {
-            SceneTransitionHandler.Instance.RegisterCallbacks();
-            SceneTransitionHandler.Instance.SwitchScene(SceneTransitionHandler.SceneStates.Lobby);
+            Debug.Log("Relay enabled");
+            string joinCode = await relayManager.StartHostWithRelay();
+            Debug.Log($"Join code: {joinCode}");
+            
+            if (joinCode != null)
+            {
+                GameManager.Instance.joinCode.Value = joinCode;
+                Debug.Log("Set GameManager joinCode");
+                // NetworkManager.Singleton.GetComponent<GameManager>().SetJoinCodeServerRpc(joinCode);
+                SceneTransitionHandler.Instance.RegisterCallbacks();
+                Debug.Log("Registered Callbacks");
+                SceneTransitionHandler.Instance.SwitchScene(SceneTransitionHandler.SceneStates.Lobby);
+                Debug.Log("Switched Scene");
+            }
+            else
+            {
+                Debug.LogError("heck");
+            }
+        }
+        else
+        {
+            Debug.LogError("no relay");
         }
     }
 
-    private void TryJoinGame()
+    public async void TryJoinGame()
     {
-        if (SetConnectionData() && NetworkManager.Singleton.StartClient())
+        RelayManager relayManager = NetworkManager.Singleton.GetComponent<RelayManager>();
+        if(relayManager.IsRelayEnabled)
         {
-            SceneTransitionHandler.Instance.RegisterCallbacks();
-            StopAllCoroutines();
-            StartCoroutine(ShowConnectingStatus());
+            if (await relayManager.StartClientWithRelay(IPInputField.text))
+            {
+                SceneTransitionHandler.Instance.RegisterCallbacks();
+                StopAllCoroutines();
+                StartCoroutine(ShowConnectingStatus());
+                return;
+            }
+            else
+            {
+                menuStatusText.text = "Could not start client";
+            }
         }
+        else
+        {
+            menuStatusText.text = "Relay not enabled";
+        }
+        
+        StopAllCoroutines();
+        StartCoroutine(ShowInvalidInputStatus());
     }
 
     public void ExitGame()
@@ -149,11 +190,11 @@ public class MainMenu : MonoBehaviour
         Application.Quit();
     }
     
-    static string SanitizeInput(string dirtyString)
-    {
-        // sanitize the input for the ip address
-        return Regex.Replace(dirtyString, "[^0-9.]", "");
-    }
+    // static string SanitizeInput(string dirtyString)
+    // {
+    //     // sanitize the input for the ip address
+    //     return Regex.Replace(dirtyString, "[^0-9.]", "");
+    // }
     
     void ShowStatusText(bool visible)
     {
