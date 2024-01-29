@@ -100,6 +100,13 @@ public class CharacterSelectManager : NetworkBehaviour
         if(playerIsReady){
             readyText.text = "CANCEL";
             readyButton.image.sprite = cancelButtonSprite;
+
+            GameObject[] parts = modelSelectCircle.GetCurrentParts();
+            PlayerModels models = new();
+            models.head = parts[0].GetComponent<Part>().modelId;
+            models.body = parts[1].GetComponent<Part>().modelId;
+            models.legs = parts[2].GetComponent<Part>().modelId;
+            GameManager.Instance.SetPlayerModel(NetworkManager.Singleton.LocalClientId, models);
         }
         else{
             readyText.text = "READY";
@@ -217,7 +224,7 @@ public class CharacterSelectManager : NetworkBehaviour
             if (clientsInLobby.ContainsKey(clientId)) 
                 clientsInLobby.Remove(clientId);
 
-            GameManager.Instance.RemoveUsername(clientId);
+            GameManager.Instance.RemovePlayer(clientId);
             GenerateUsersInLobby();
             UpdateAndCheckPlayersInLobby();
         }
