@@ -14,6 +14,9 @@ public class MainMenu : MonoBehaviour
         Client
     }
 
+    [SerializeField] private GameObject titleScreenPanel;
+    [SerializeField] private GameObject mainMenuPanel;
+
     public TMP_InputField codeInputField;
     public TMP_InputField hostUsernameInputField;
     public TMP_InputField usernameInputField;
@@ -35,6 +38,12 @@ public class MainMenu : MonoBehaviour
         
         NetworkManager.Singleton.OnClientConnectedCallback += OnOnClientConnectedCallback;
         NetworkManager.Singleton.OnClientDisconnectCallback += OnOnClientDisconnectCallback;
+    }
+
+    public void ToggleTitleScreenOnClick(bool set)
+    {
+        titleScreenPanel.SetActive(set);
+        mainMenuPanel.SetActive(!set);
     }
 
     void OnOnClientConnectedCallback(ulong obj)
