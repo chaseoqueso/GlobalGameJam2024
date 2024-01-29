@@ -49,13 +49,7 @@ public class ModelSelectCircle : MonoBehaviour
         currentLegs = 0;
 
         // Positioning everything
-<<<<<<< HEAD
-        // int fillModels = models.Count - headDatabase.Count;
         int numModels = headDatabase.Count;
-        // int numModels = models.Count;
-=======
-        int numModels = headDatabase.Count;
->>>>>>> 1f4531a (aligned models, added score and respawn to player (theoretically))
         ROTATION_ANGLE = 360f / numModels;
 
         float zValueMod = 0f;
