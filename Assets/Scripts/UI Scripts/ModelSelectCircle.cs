@@ -18,8 +18,6 @@ public class ModelSelectCircle : MonoBehaviour
         [SerializeField] private GameObject torsoPositionerPrefab;
         [SerializeField] private GameObject legsPositionerPrefab;
 
-        [SerializeField] private List<GameObject> models;   // Delete this once models are in
-
         private const float Z_POS_CURRENT_MODEL = -3.88f;   // Base radius
 
         private Dictionary<ModelID,GameObject> headDatabase = new Dictionary<ModelID,GameObject>();

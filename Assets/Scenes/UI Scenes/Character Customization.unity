@@ -3092,8 +3092,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 1, y: 0}
   m_AnchorMax: {x: 1, y: 0}
-  m_AnchoredPosition: {x: -278.19, y: 66.54401}
-  m_SizeDelta: {x: 465.81, y: 133.088}
+  m_AnchoredPosition: {x: -278.19, y: 67.772736}
+  m_SizeDelta: {x: 465.81, y: 91.3113}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &2057997593
 MonoBehaviour:
@@ -3115,10 +3115,10 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: JOIN CODE
+  m_text: 'join code: 123456'
   m_isRightToLeft: 0
-  m_fontAsset: {fileID: 11400000, guid: c4f4ab34dc93ab04aae6bfeded59c51e, type: 2}
-  m_sharedMaterial: {fileID: 2221817422826873469, guid: c4f4ab34dc93ab04aae6bfeded59c51e, type: 2}
+  m_fontAsset: {fileID: 11400000, guid: 684a3fb6bb8dc66438e88a9a2a7b8181, type: 2}
+  m_sharedMaterial: {fileID: 7853901592716079029, guid: 684a3fb6bb8dc66438e88a9a2a7b8181, type: 2}
   m_fontSharedMaterials: []
   m_fontMaterial: {fileID: 0}
   m_fontMaterials: []
@@ -3142,14 +3142,14 @@ MonoBehaviour:
   m_faceColor:
     serializedVersion: 2
     rgba: 4294967295
-  m_fontSize: 72
+  m_fontSize: 45.95
   m_fontSizeBase: 69.86
   m_fontWeight: 400
   m_enableAutoSizing: 1
   m_fontSizeMin: 18
   m_fontSizeMax: 72
-  m_fontStyle: 0
-  m_HorizontalAlignment: 1
+  m_fontStyle: 1
+  m_HorizontalAlignment: 2
   m_VerticalAlignment: 512
   m_textAlignment: 65535
   m_characterSpacing: 0

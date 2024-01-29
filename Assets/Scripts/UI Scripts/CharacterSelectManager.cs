@@ -51,7 +51,7 @@ public class CharacterSelectManager : NetworkBehaviour
         
         // DisplayNewPlayer(); // TODO: Pass in this player's info
 
-        joinCodeText.text = GameManager.Instance.joinCode.Value;
+        joinCodeText.text = "join: " + GameManager.Instance.joinCode.Value.ToString().ToLower();
         Debug.Log(GameManager.Instance.GetUsername(NetworkManager.Singleton.LocalClientId));
     }
 
