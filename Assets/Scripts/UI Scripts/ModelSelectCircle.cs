@@ -23,8 +23,6 @@ public class ModelSelectCircle : MonoBehaviour
         private Dictionary<ModelID,GameObject> headDatabase = new Dictionary<ModelID,GameObject>();
         private Dictionary<ModelID,GameObject> torsoDatabase = new Dictionary<ModelID,GameObject>();
         private Dictionary<ModelID,GameObject> legsDatabase = new Dictionary<ModelID,GameObject>();
-
-        private const float Z_POS_CURRENT_MODEL = -3.88f;   // Base radius
     #endregion
 
     [SerializeField] private GameObject headCircle;
@@ -181,8 +179,8 @@ public class ModelSelectCircle : MonoBehaviour
 
     public GameObject[] GetCurrentParts()
     {
-        Debug.Log(string.Format("Selected head: {0}, torso: {1}, legs: {2}",
-            currentHead.ToString(), currentTorso.ToString(), currentLegs.ToString()));
+        // Debug.Log(string.Format("Selected head: {0}, torso: {1}, legs: {2}",
+            // currentHead.ToString(), currentTorso.ToString(), currentLegs.ToString()));
 
         if(!headDatabase.ContainsKey(currentHead)){
             Debug.LogError("No head " + currentHead.ToString() + " found in database");

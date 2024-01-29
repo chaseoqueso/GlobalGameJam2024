@@ -10,16 +10,14 @@ public class LobbyPlayerPanel : MonoBehaviour
     [SerializeField] private GameObject readyUI;
     [SerializeField] private Image readyImg;
 
-    public void PlayerIsReady(bool isReady)
+    public void PlayerIsReady(bool isReady, Sprite readySprite)
     {
         readyUI.SetActive(isReady);
+        readyImg.sprite = readySprite;
     }
 
-    public void SetValues(Player p)
+    public void SetValues(string username)
     {
-        // TODO
-        usernameText.text = "user test";
-
-        // readyImg.sprite = random sprite
+        usernameText.text = username;
     }
 }
