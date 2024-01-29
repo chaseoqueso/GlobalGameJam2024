@@ -48,10 +48,11 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   speed: 2
-  weight: 4
-  charge_up: 1
-  handling: 1
-  body_part: 2
+  weight: 9
+  charge_up: 6
+  handling: 3
+  bodyPart: 0
+  modelId: 0
 --- !u!1 &2706230137562106883
 GameObject:
   m_ObjectHideFlags: 0

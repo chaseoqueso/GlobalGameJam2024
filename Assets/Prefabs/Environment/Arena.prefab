@@ -24,8 +24,8 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 694908059223676597}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_LocalPosition: {x: 0.000000661, y: -0.065645, z: 0.00000055083}
+  m_LocalScale: {x: 1.0442, y: 1.0033717, z: 1.0442}
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 1500249726457524364}
@@ -66,8 +66,8 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 695813714835134877}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 9.6444, y: 9.6444, z: 9.6444}
+  m_LocalPosition: {x: -0.51, y: 0.52, z: -1.08}
+  m_LocalScale: {x: 11.765641, y: 11.765641, z: 11.765641}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 8692010600900203713}
@@ -101,7 +101,7 @@ MeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: b0107e315ef1855488d3f19d02e98cdc, type: 2}
+  - {fileID: 2100000, guid: f0f745bfd3e6e264987ef1322307479b, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -554,6 +554,14 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 6940729186044785363, guid: 5da24b188529ea642a2b512eeb927281, type: 3}
+      propertyPath: m_Materials.Array.data[0]
+      value: 
+      objectReference: {fileID: 2100000, guid: c5d8f70cecdff6749b41db4a83ca5d98, type: 2}
+    - target: {fileID: 6940729186484280049, guid: 5da24b188529ea642a2b512eeb927281, type: 3}
+      propertyPath: m_Materials.Array.data[0]
+      value: 
+      objectReference: {fileID: 2100000, guid: 29cde177d9ef9b64d93953e6b416202b, type: 2}
     - target: {fileID: 8984171624476540345, guid: 5da24b188529ea642a2b512eeb927281, type: 3}
       propertyPath: m_Name
       value: Lego Pillar (5)
@@ -812,6 +820,14 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 3510191781946641464, guid: 5da24b188529ea642a2b512eeb927281, type: 3}
+      propertyPath: m_Materials.Array.data[0]
+      value: 
+      objectReference: {fileID: 2100000, guid: 586b5a2c8a8259a4c888a2fa89d5dada, type: 2}
+    - target: {fileID: 5810578515008895531, guid: 5da24b188529ea642a2b512eeb927281, type: 3}
+      propertyPath: m_Materials.Array.data[0]
+      value: 
+      objectReference: {fileID: 2100000, guid: c5d8f70cecdff6749b41db4a83ca5d98, type: 2}
     - target: {fileID: 8984171624476540345, guid: 5da24b188529ea642a2b512eeb927281, type: 3}
       propertyPath: m_Name
       value: Lego Pillar (9)
@@ -2446,6 +2462,22 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 3510191781724286917, guid: 5da24b188529ea642a2b512eeb927281, type: 3}
+      propertyPath: m_Materials.Array.data[0]
+      value: 
+      objectReference: {fileID: 2100000, guid: f1df15eb3b5c56842ac49e5e13487e4f, type: 2}
+    - target: {fileID: 5124756924422555833, guid: 5da24b188529ea642a2b512eeb927281, type: 3}
+      propertyPath: m_Materials.Array.data[0]
+      value: 
+      objectReference: {fileID: 2100000, guid: c5d8f70cecdff6749b41db4a83ca5d98, type: 2}
+    - target: {fileID: 5810578515264281046, guid: 5da24b188529ea642a2b512eeb927281, type: 3}
+      propertyPath: m_Materials.Array.data[0]
+      value: 
+      objectReference: {fileID: 2100000, guid: 29cde177d9ef9b64d93953e6b416202b, type: 2}
+    - target: {fileID: 6940729186044785363, guid: 5da24b188529ea642a2b512eeb927281, type: 3}
+      propertyPath: m_Materials.Array.data[0]
+      value: 
+      objectReference: {fileID: 2100000, guid: 29cde177d9ef9b64d93953e6b416202b, type: 2}
     - target: {fileID: 8984171624476540345, guid: 5da24b188529ea642a2b512eeb927281, type: 3}
       propertyPath: m_Name
       value: Lego Pillar (11)
@@ -2520,6 +2552,18 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 5810578514615628276, guid: 5da24b188529ea642a2b512eeb927281, type: 3}
+      propertyPath: m_Materials.Array.data[0]
+      value: 
+      objectReference: {fileID: 2100000, guid: f1df15eb3b5c56842ac49e5e13487e4f, type: 2}
+    - target: {fileID: 5810578514907848670, guid: 5da24b188529ea642a2b512eeb927281, type: 3}
+      propertyPath: m_Materials.Array.data[0]
+      value: 
+      objectReference: {fileID: 2100000, guid: c5d8f70cecdff6749b41db4a83ca5d98, type: 2}
+    - target: {fileID: 6940729186484280049, guid: 5da24b188529ea642a2b512eeb927281, type: 3}
+      propertyPath: m_Materials.Array.data[0]
+      value: 
+      objectReference: {fileID: 2100000, guid: 29cde177d9ef9b64d93953e6b416202b, type: 2}
     - target: {fileID: 8984171624476540345, guid: 5da24b188529ea642a2b512eeb927281, type: 3}
       propertyPath: m_Name
       value: Lego Pillar (8)
@@ -2718,6 +2762,18 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 5810578514808542891, guid: 5da24b188529ea642a2b512eeb927281, type: 3}
+      propertyPath: m_Materials.Array.data[0]
+      value: 
+      objectReference: {fileID: 2100000, guid: 586b5a2c8a8259a4c888a2fa89d5dada, type: 2}
+    - target: {fileID: 6940729185822675246, guid: 5da24b188529ea642a2b512eeb927281, type: 3}
+      propertyPath: m_Materials.Array.data[0]
+      value: 
+      objectReference: {fileID: 2100000, guid: f1df15eb3b5c56842ac49e5e13487e4f, type: 2}
+    - target: {fileID: 6940729185856124123, guid: 5da24b188529ea642a2b512eeb927281, type: 3}
+      propertyPath: m_Materials.Array.data[0]
+      value: 
+      objectReference: {fileID: 2100000, guid: 586b5a2c8a8259a4c888a2fa89d5dada, type: 2}
     - target: {fileID: 8984171624476540345, guid: 5da24b188529ea642a2b512eeb927281, type: 3}
       propertyPath: m_Name
       value: Lego Pillar (2)
@@ -2810,6 +2866,10 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 2602783780673255032}
     m_Modifications:
+    - target: {fileID: 527948901947949509, guid: 5da24b188529ea642a2b512eeb927281, type: 3}
+      propertyPath: m_Materials.Array.data[0]
+      value: 
+      objectReference: {fileID: 2100000, guid: 586b5a2c8a8259a4c888a2fa89d5dada, type: 2}
     - target: {fileID: 881773173790175573, guid: 5da24b188529ea642a2b512eeb927281, type: 3}
       propertyPath: m_RootOrder
       value: 0
@@ -2866,6 +2926,10 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 5810578514808542891, guid: 5da24b188529ea642a2b512eeb927281, type: 3}
+      propertyPath: m_Materials.Array.data[0]
+      value: 
+      objectReference: {fileID: 2100000, guid: c5d8f70cecdff6749b41db4a83ca5d98, type: 2}
     - target: {fileID: 8984171624476540345, guid: 5da24b188529ea642a2b512eeb927281, type: 3}
       propertyPath: m_Name
       value: Lego Pillar (3)
@@ -3042,27 +3106,27 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: bc4a5a62b79c64b44861bb1f9d72ea6e, type: 3}
       propertyPath: m_LocalScale.x
-      value: 5.9155083
+      value: 6.1769733
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: bc4a5a62b79c64b44861bb1f9d72ea6e, type: 3}
       propertyPath: m_LocalScale.y
-      value: 5.9155083
+      value: 5.935454
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: bc4a5a62b79c64b44861bb1f9d72ea6e, type: 3}
       propertyPath: m_LocalScale.z
-      value: 5.9155083
+      value: 6.1769733
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: bc4a5a62b79c64b44861bb1f9d72ea6e, type: 3}
       propertyPath: m_LocalPosition.x
-      value: 0
+      value: 0.000000661
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: bc4a5a62b79c64b44861bb1f9d72ea6e, type: 3}
       propertyPath: m_LocalPosition.y
-      value: 0
+      value: -0.065645
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: bc4a5a62b79c64b44861bb1f9d72ea6e, type: 3}
       propertyPath: m_LocalPosition.z
-      value: 0
+      value: 0.00000055083
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: bc4a5a62b79c64b44861bb1f9d72ea6e, type: 3}
       propertyPath: m_LocalRotation.w
