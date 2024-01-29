@@ -126,17 +126,22 @@ public class Player : NetworkBehaviour
 
     private void InstantiateParts()
     {
+        PlayerModels models = GameManager.Instance.GetPlayerModels(NetworkManager.Singleton.LocalClientId);
+
         Transform head_slot = model.transform.GetChild(0);
+        head = GameManager.Instance.headDatabase[models.head];
         GameObject headObject = Instantiate(head, head.transform.position + 10 * Vector3.up, head.transform.rotation);
         headObject.transform.parent = head_slot;
         Debug.Log(headObject.transform.position);
 
         Transform body_slot = model.transform.GetChild(1);
+        body = GameManager.Instance.torsoDatabase[models.body];
         GameObject bodyObject = Instantiate(body, body.transform.position + 10 * Vector3.up, body.transform.rotation);
         bodyObject.transform.parent = body_slot;
         Debug.Log(bodyObject.transform.position);
 
         Transform legs_slot = model.transform.GetChild(2);
+        legs = GameManager.Instance.legsDatabase[models.legs];
         GameObject legsObject = Instantiate(legs, legs.transform.position + 10 * Vector3.up, legs.transform.rotation);
         legsObject.transform.parent = legs_slot;
         Debug.Log(legsObject.transform.position);

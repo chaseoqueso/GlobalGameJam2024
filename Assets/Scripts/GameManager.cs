@@ -22,6 +22,13 @@ public struct NetworkString : INetworkSerializable
     public static implicit operator NetworkString(string s) => new NetworkString() { info = new FixedString32Bytes(s) };
 }
 
+public struct PlayerModels : INetworkSerializeByMemcpy 
+{
+    public ModelID head;
+    public ModelID body;
+    public ModelID legs;
+}
+
 public class GameManager : NetworkBehaviour
 {
     static public GameManager Instance { get; internal set; }
@@ -33,7 +40,12 @@ public class GameManager : NetworkBehaviour
     public NetworkVariable<NetworkString> joinCode = new();
     public string cachedUsername;
 
+    public Dictionary<ModelID,GameObject> headDatabase = new Dictionary<ModelID,GameObject>();
+    public Dictionary<ModelID,GameObject> torsoDatabase = new Dictionary<ModelID,GameObject>();
+    public Dictionary<ModelID,GameObject> legsDatabase = new Dictionary<ModelID,GameObject>();
+
     private Dictionary<ulong, string> usernameDict = new();
+    private Dictionary<ulong, PlayerModels> modelDict = new();
 
     void Awake()
     {
@@ -45,6 +57,7 @@ public class GameManager : NetworkBehaviour
         DontDestroyOnLoad(this);
     }
 
+#region Usernames
     public void AddCachedUsername(ulong clientId)
     {
         Debug.Log($"Adding cached username {cachedUsername} to client {clientId}");
@@ -65,9 +78,10 @@ public class GameManager : NetworkBehaviour
         return null;
     }
 
-    public void RemoveUsername(ulong clientId)
+    public void RemovePlayer(ulong clientId)
     {
         RemoveUsernameServerRpc(clientId);
+        RemovePlayerModelServerRpc(clientId);
     }
 
     public void SyncUsernames(ulong[] clientIds)
@@ -158,4 +172,124 @@ public class GameManager : NetworkBehaviour
             Debug.Log($"CLIENT: Synced username {values[i]} to client {keys[i]}");
         }
     }
+#endregion
+
+#region PlayerModels
+
+    public void LoadAllModels()
+    {
+        // Load in the models of each type from the relevant folder in Resources
+
+        // Heads
+
+        Object[] headList = Resources.LoadAll("Models/Heads");   //, typeof(ModelPart));
+        Debug.Log(string.Format("Loaded {0} heads", headList.Length));
+        foreach(Object h in headList){
+            GameObject head = (GameObject)h;
+
+            ModelID modelID = head.GetComponent<Part>().modelId;     // TODO: Get the ID for this model
+            
+            if(headDatabase.ContainsKey( modelID )){
+                    continue;
+            }
+            
+            // Add the model to the dictionary
+            headDatabase.Add( modelID, head );
+        }
+
+        // Torsos
+
+        Object[] torsoList = Resources.LoadAll("Models/Torsos");   //, typeof(ModelPart));
+        Debug.Log(string.Format("Loaded {0} torsos", torsoList.Length));
+        foreach (Object t in torsoList){
+            GameObject torso = (GameObject)t;   // Cast by ModelPart ScriptableObject type
+            ModelID modelID = torso.GetComponent<Part>().modelId;     // TODO: Get the ID for this model
+                                                                      // 
+            if (torsoDatabase.ContainsKey( modelID )){
+                    continue;
+            }
+            
+            // Add the model to the dictionary
+            torsoDatabase.Add( modelID, torso );
+        }
+
+        // Legs
+
+        Object[] legsList = Resources.LoadAll("Models/Legs");   //, typeof(ModelPart));
+        Debug.Log(string.Format("Loaded {0} legs", legsList.Length));
+        foreach (Object l in legsList){
+            GameObject legs = (GameObject)l;   // Cast by ModelPart ScriptableObject type
+            ModelID modelID = legs.GetComponent<Part>().modelId;     // TODO: Get the ID for this model
+                                                                      // 
+            if (legsDatabase.ContainsKey( modelID )){
+                    continue;
+            }
+            
+            // Add the model to the dictionary
+            legsDatabase.Add( modelID, legs );
+        }
+
+        // If the number of heads =/= torsos =/= legs, throw an error
+        if( headDatabase.Count != torsoDatabase.Count || torsoDatabase.Count != legsDatabase.Count ){
+            Debug.LogError("The number of model parts do not match!");
+        }
+    }
+
+    public void SetPlayerModel(ulong clientId, PlayerModels models)
+    {
+        SetPlayerModelServerRpc(clientId, models);
+    }
+
+    public PlayerModels GetPlayerModels(ulong clientId)
+    {
+        return modelDict[clientId];
+    }
+
+    [ServerRpc]
+    private void SetPlayerModelServerRpc(ulong clientId, PlayerModels models)
+    {
+        SetPlayerModelInternal(clientId, models);
+        SetPlayerModelClientRpc(clientId, models);
+    }
+
+    [ClientRpc]
+    private void SetPlayerModelClientRpc(ulong clientId, PlayerModels models)
+    {
+        SetPlayerModelInternal(clientId, models);
+    }
+
+    private void SetPlayerModelInternal(ulong clientId, PlayerModels models)
+    {
+        if(modelDict.ContainsKey(clientId))
+        {
+            modelDict[clientId] = models;
+        }
+        else
+        {
+            modelDict.Add(clientId, models);
+        }
+    }
+
+    [ServerRpc]
+    private void RemovePlayerModelServerRpc(ulong clientId)
+    {
+        RemovePlayerModelInternal(clientId);
+        RemovePlayerModelClientRpc(clientId);
+    }
+
+    [ClientRpc]
+    private void RemovePlayerModelClientRpc(ulong clientId)
+    {
+        RemovePlayerModelInternal(clientId);
+    }
+
+    private void RemovePlayerModelInternal(ulong clientId)
+    {
+        if(modelDict.ContainsKey(clientId))
+        {
+            modelDict.Remove(clientId);
+        }
+    }
+#endregion
+
 }
