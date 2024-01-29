@@ -49,9 +49,13 @@ public class ModelSelectCircle : MonoBehaviour
         currentLegs = 0;
 
         // Positioning everything
+<<<<<<< HEAD
         // int fillModels = models.Count - headDatabase.Count;
         int numModels = headDatabase.Count;
         // int numModels = models.Count;
+=======
+        int numModels = headDatabase.Count;
+>>>>>>> 1f4531a (aligned models, added score and respawn to player (theoretically))
         ROTATION_ANGLE = 360f / numModels;
 
         float zValueMod = 0f;
@@ -86,36 +90,36 @@ public class ModelSelectCircle : MonoBehaviour
             Transform defaultHeadTransform = headDatabase[modelId].transform;
             GameObject headModel = Instantiate(
                 headDatabase[modelId],
-                new Vector3(defaultHeadTransform.position.x * -1, defaultHeadTransform.position.y, defaultHeadTransform.position.x * -1 + radius),
-                defaultHeadTransform.rotation * Quaternion.Euler(0, 180f, 0),
+                new Vector3(defaultHeadTransform.position.x, defaultHeadTransform.position.y, defaultHeadTransform.position.z - radius),
+                defaultHeadTransform.rotation,
                 newHeadPos.transform
             );
             // newHeadPos.GetComponentInChildren<MeshRenderer>().transform.Translate( new Vector3(0,0,radius) );   // TEMP?
-            newHeadPos.transform.Rotate( new Vector3(0,rotationPositioner,0), Space.Self );                     // Rotation on the circle
+            newHeadPos.transform.Rotate( new Vector3(0,rotationPositioner + 180f,0), Space.Self );                     // Rotation on the circle
 
             GameObject newTorsoPos = Instantiate(torsoPositionerPrefab, new Vector3(0,0,0), Quaternion.identity, torsoCircle.transform);
             newTorsoPos.transform.Translate( new Vector3(0,0,torsoCircle.transform.position.z), Space.Self );   // Radius
             Transform defaultTorsoTransform = torsoDatabase[modelId].transform;
             GameObject torsoModel = Instantiate(
                 torsoDatabase[modelId],
-                new Vector3(defaultTorsoTransform.position.x * -1, defaultTorsoTransform.position.y, defaultTorsoTransform.position.x * -1 + radius),
-                defaultTorsoTransform.rotation * Quaternion.Euler(0, 180f, 0),
+                new Vector3(defaultTorsoTransform.position.x, defaultTorsoTransform.position.y, defaultTorsoTransform.position.z - radius),
+                defaultTorsoTransform.rotation,
                 newTorsoPos.transform
             );
             // newTorsoPos.GetComponentInChildren<MeshRenderer>().transform.Translate( new Vector3(0,0,radius) );  // TEMP?
-            newTorsoPos.transform.Rotate( new Vector3(0,rotationPositioner,0), Space.Self );                    // Rotation on the circle
+            newTorsoPos.transform.Rotate( new Vector3(0,rotationPositioner + 180f,0), Space.Self );                    // Rotation on the circle
 
             GameObject newLegsPos = Instantiate(legsPositionerPrefab, new Vector3(0,0,0), Quaternion.identity, legsCircle.transform);
             newLegsPos.transform.Translate( new Vector3(0,0,legsCircle.transform.position.z), Space.Self );     // Radius
             Transform defaultLegsTransform = legsDatabase[modelId].transform;
             GameObject legsModel = Instantiate(
                 legsDatabase[modelId],
-                new Vector3(defaultLegsTransform.position.x * -1, defaultLegsTransform.position.y, defaultLegsTransform.position.x * -1 + radius),
-                defaultLegsTransform.rotation * Quaternion.Euler(0, 180f, 0),
+                new Vector3(defaultLegsTransform.position.x, defaultLegsTransform.position.y, defaultLegsTransform.position.z - radius),
+                defaultLegsTransform.rotation,
                 newLegsPos.transform
             );
             // newLegsPos.GetComponentInChildren<MeshRenderer>().transform.Translate( new Vector3(0,0,radius) );   // TEMP?
-            newLegsPos.transform.Rotate( new Vector3(0,rotationPositioner,0), Space.Self );                     // Rotation on the circle
+            newLegsPos.transform.Rotate( new Vector3(0,rotationPositioner + 180f,0), Space.Self );                     // Rotation on the circle
 
             rotationPositioner += ROTATION_ANGLE;
 
