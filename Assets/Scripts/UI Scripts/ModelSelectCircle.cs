@@ -20,11 +20,11 @@ public class ModelSelectCircle : MonoBehaviour
 
         [SerializeField] private List<GameObject> models;   // Delete this once models are in
 
-        private const float Z_POS_CURRENT_MODEL = -3.88f;   // Base radius
-
         private Dictionary<ModelID,GameObject> headDatabase = new Dictionary<ModelID,GameObject>();
         private Dictionary<ModelID,GameObject> torsoDatabase = new Dictionary<ModelID,GameObject>();
         private Dictionary<ModelID,GameObject> legsDatabase = new Dictionary<ModelID,GameObject>();
+
+        private const float Z_POS_CURRENT_MODEL = -3.88f;   // Base radius
     #endregion
 
     [SerializeField] private GameObject headCircle;
@@ -39,7 +39,10 @@ public class ModelSelectCircle : MonoBehaviour
 
     void Awake()
     {
-        LoadAllModels();
+        GameManager.Instance.LoadAllModels();
+        headDatabase = GameManager.Instance.headDatabase;
+        torsoDatabase = GameManager.Instance.torsoDatabase;
+        legsDatabase = GameManager.Instance.legsDatabase;
     }
 
     void Start()
@@ -139,65 +142,6 @@ public class ModelSelectCircle : MonoBehaviour
                     tempColorPicker = 0;
                 }
             }
-        }
-    }
-
-    private void LoadAllModels()
-    {
-        // Load in the models of each type from the relevant folder in Resources
-
-        // Heads
-
-        Object[] headList = Resources.LoadAll("Models/Heads");   //, typeof(ModelPart));
-        Debug.Log(string.Format("Loaded {0} heads", headList.Length));
-        foreach(Object h in headList){
-            GameObject head = (GameObject)h;
-
-            ModelID modelID = head.GetComponent<Part>().modelId;     // TODO: Get the ID for this model
-            
-            if(headDatabase.ContainsKey( modelID )){
-                    continue;
-            }
-            
-            // Add the model to the dictionary
-            headDatabase.Add( modelID, head );
-        }
-
-        // Torsos
-
-        Object[] torsoList = Resources.LoadAll("Models/Torsos");   //, typeof(ModelPart));
-        Debug.Log(string.Format("Loaded {0} torsos", torsoList.Length));
-        foreach (Object t in torsoList){
-            GameObject torso = (GameObject)t;   // Cast by ModelPart ScriptableObject type
-            ModelID modelID = torso.GetComponent<Part>().modelId;     // TODO: Get the ID for this model
-                                                                      // 
-            if (torsoDatabase.ContainsKey( modelID )){
-                    continue;
-            }
-            
-            // Add the model to the dictionary
-            torsoDatabase.Add( modelID, torso );
-        }
-
-        // Legs
-
-        Object[] legsList = Resources.LoadAll("Models/Legs");   //, typeof(ModelPart));
-        Debug.Log(string.Format("Loaded {0} legs", legsList.Length));
-        foreach (Object l in legsList){
-            GameObject legs = (GameObject)l;   // Cast by ModelPart ScriptableObject type
-            ModelID modelID = legs.GetComponent<Part>().modelId;     // TODO: Get the ID for this model
-                                                                      // 
-            if (legsDatabase.ContainsKey( modelID )){
-                    continue;
-            }
-            
-            // Add the model to the dictionary
-            legsDatabase.Add( modelID, legs );
-        }
-
-        // If the number of heads =/= torsos =/= legs, throw an error
-        if( headDatabase.Count != torsoDatabase.Count || torsoDatabase.Count != legsDatabase.Count ){
-            Debug.LogError("The number of model parts do not match!");
         }
     }
 
