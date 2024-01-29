@@ -99,7 +99,16 @@ public class Player : NetworkBehaviour
         gameObject.GetComponent<SphereCollider>().enabled = true;
 
         //TODO: respawn at the correct place
-        gameObject.transform.position = new Vector3(0, 10, 0);
+        gameObject.transform.position = getRandomSpawn();
+    }
+
+    private Vector3 getRandomSpawn()
+    {
+        float r = UnityEngine.Random.Range(0f, 20f);
+        float angle = UnityEngine.Random.Range(0f, 360f);
+
+        Vector3 spawnPoint = Quaternion.Euler(0, angle, 0) * new Vector3(r, 40, 0);
+        return spawnPoint;
     }
 
     public void loseScore()
@@ -151,11 +160,11 @@ public class Player : NetworkBehaviour
         Debug.Log(String.Format("Handling set to {0}", handling));
 
         // Speed increases or reduces base speed by up to 30%
-        float speedMod = 0.7f + 0.6f * speed;  // Tune Me!
+        float speedMod = 0.7f + 0.6f * speed/10f;  // Tune Me!
         moveSpeed = speedMod * moveSpeed;
 
         // ChargeUP increases or reduces time to max charge by up to 30%
-        float chargeMod = 0.7f + 0.6f * chargeUp;  // Tune Me!
+        float chargeMod = 0.7f + 0.6f * chargeUp/10f;  // Tune Me!
         dashChargeTime = chargeMod * dashChargeTime;
     }
     #endregion
@@ -504,8 +513,8 @@ public class Player : NetworkBehaviour
             }
             else
             {
-                //Debug.Log("Take damage anyway for testing");
-                //takeDamage(collision.relativeVelocity.magnitude, collision.GetContact(0).normal, false, true);
+                Debug.Log("Take damage anyway for testing");
+                takeDamage(collision.relativeVelocity.magnitude, collision.GetContact(0).normal, false, true);
             }
         }
     }   
