@@ -187,10 +187,18 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 5553899026242748089, guid: 5248e6ab7873a2f4ca63edaf6095da93, type: 3}
+      propertyPath: m_Materials.Array.data[0]
+      value: 
+      objectReference: {fileID: 2100000, guid: 29cde177d9ef9b64d93953e6b416202b, type: 2}
     - target: {fileID: 6625052217903888411, guid: 5248e6ab7873a2f4ca63edaf6095da93, type: 3}
       propertyPath: m_Name
       value: LegoCluster_1 (6)
       objectReference: {fileID: 0}
+    - target: {fileID: 9070908847348815292, guid: 5248e6ab7873a2f4ca63edaf6095da93, type: 3}
+      propertyPath: m_Materials.Array.data[0]
+      value: 
+      objectReference: {fileID: 2100000, guid: 586b5a2c8a8259a4c888a2fa89d5dada, type: 2}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 5248e6ab7873a2f4ca63edaf6095da93, type: 3}
 --- !u!4 &2132477057164218612 stripped
@@ -373,10 +381,22 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 1335824801652035512, guid: 5248e6ab7873a2f4ca63edaf6095da93, type: 3}
+      propertyPath: m_Materials.Array.data[0]
+      value: 
+      objectReference: {fileID: 2100000, guid: 586b5a2c8a8259a4c888a2fa89d5dada, type: 2}
+    - target: {fileID: 2644843475457124936, guid: 5248e6ab7873a2f4ca63edaf6095da93, type: 3}
+      propertyPath: m_Materials.Array.data[0]
+      value: 
+      objectReference: {fileID: 2100000, guid: b86b50fe3c5d05a40aac807a46019078, type: 2}
     - target: {fileID: 6625052217903888411, guid: 5248e6ab7873a2f4ca63edaf6095da93, type: 3}
       propertyPath: m_Name
       value: LegoCluster_1 (1)
       objectReference: {fileID: 0}
+    - target: {fileID: 9070908847348815292, guid: 5248e6ab7873a2f4ca63edaf6095da93, type: 3}
+      propertyPath: m_Materials.Array.data[0]
+      value: 
+      objectReference: {fileID: 2100000, guid: 29cde177d9ef9b64d93953e6b416202b, type: 2}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 5248e6ab7873a2f4ca63edaf6095da93, type: 3}
 --- !u!4 &2132477057798953345 stripped
@@ -435,6 +455,10 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 1937565268007555022, guid: 5248e6ab7873a2f4ca63edaf6095da93, type: 3}
+      propertyPath: m_Materials.Array.data[0]
+      value: 
+      objectReference: {fileID: 2100000, guid: 29cde177d9ef9b64d93953e6b416202b, type: 2}
     - target: {fileID: 6625052217903888411, guid: 5248e6ab7873a2f4ca63edaf6095da93, type: 3}
       propertyPath: m_Name
       value: LegoCluster_1 (4)
@@ -497,6 +521,18 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 1937565268007555022, guid: 5248e6ab7873a2f4ca63edaf6095da93, type: 3}
+      propertyPath: m_Materials.Array.data[0]
+      value: 
+      objectReference: {fileID: 2100000, guid: c5d8f70cecdff6749b41db4a83ca5d98, type: 2}
+    - target: {fileID: 2644843475457124936, guid: 5248e6ab7873a2f4ca63edaf6095da93, type: 3}
+      propertyPath: m_Materials.Array.data[0]
+      value: 
+      objectReference: {fileID: 2100000, guid: 586b5a2c8a8259a4c888a2fa89d5dada, type: 2}
+    - target: {fileID: 5553899026242748089, guid: 5248e6ab7873a2f4ca63edaf6095da93, type: 3}
+      propertyPath: m_Materials.Array.data[0]
+      value: 
+      objectReference: {fileID: 2100000, guid: c5d8f70cecdff6749b41db4a83ca5d98, type: 2}
     - target: {fileID: 6625052217903888411, guid: 5248e6ab7873a2f4ca63edaf6095da93, type: 3}
       propertyPath: m_Name
       value: LegoCluster_1 (3)
@@ -515,6 +551,14 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 881773173790175573}
     m_Modifications:
+    - target: {fileID: 2196379456439637913, guid: 9082ec7d8add1334692cc2a863b8aaad, type: 3}
+      propertyPath: m_Materials.Array.data[0]
+      value: 
+      objectReference: {fileID: 2100000, guid: 000e3cc8697f360448efe043cd99897f, type: 2}
+    - target: {fileID: 5665462097149077874, guid: 9082ec7d8add1334692cc2a863b8aaad, type: 3}
+      propertyPath: m_Materials.Array.data[0]
+      value: 
+      objectReference: {fileID: 2100000, guid: b86b50fe3c5d05a40aac807a46019078, type: 2}
     - target: {fileID: 6575002051024731507, guid: 9082ec7d8add1334692cc2a863b8aaad, type: 3}
       propertyPath: m_RootOrder
       value: 0
