@@ -183,7 +183,7 @@ public class GameManager : NetworkBehaviour
         // Heads
 
         Object[] headList = Resources.LoadAll("Models/Heads");   //, typeof(ModelPart));
-        Debug.Log(string.Format("Loaded {0} heads", headList.Length));
+        // Debug.Log(string.Format("Loaded {0} heads", headList.Length));
         foreach(Object h in headList){
             GameObject head = (GameObject)h;
 
@@ -200,7 +200,7 @@ public class GameManager : NetworkBehaviour
         // Torsos
 
         Object[] torsoList = Resources.LoadAll("Models/Torsos");   //, typeof(ModelPart));
-        Debug.Log(string.Format("Loaded {0} torsos", torsoList.Length));
+        // Debug.Log(string.Format("Loaded {0} torsos", torsoList.Length));
         foreach (Object t in torsoList){
             GameObject torso = (GameObject)t;   // Cast by ModelPart ScriptableObject type
             ModelID modelID = torso.GetComponent<Part>().modelId;     // TODO: Get the ID for this model
@@ -216,7 +216,7 @@ public class GameManager : NetworkBehaviour
         // Legs
 
         Object[] legsList = Resources.LoadAll("Models/Legs");   //, typeof(ModelPart));
-        Debug.Log(string.Format("Loaded {0} legs", legsList.Length));
+        // Debug.Log(string.Format("Loaded {0} legs", legsList.Length));
         foreach (Object l in legsList){
             GameObject legs = (GameObject)l;   // Cast by ModelPart ScriptableObject type
             ModelID modelID = legs.GetComponent<Part>().modelId;     // TODO: Get the ID for this model

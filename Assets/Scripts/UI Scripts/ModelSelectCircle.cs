@@ -6,25 +6,23 @@ using UnityEngine;
 
 public class ModelSelectCircle : MonoBehaviour
 {
-    #region TEMP - DELETE THIS ONCE MODELS ARE IN
-        [SerializeField] private Material testMatDefault;
-        [SerializeField] private Material testMat1;
-        [SerializeField] private Material testMat2;
-        [SerializeField] private Material testMat3;
-    #endregion
+    // #region TEMP - DELETE THIS ONCE MODELS ARE IN
+    //     [SerializeField] private Material testMatDefault;
+    //     [SerializeField] private Material testMat1;
+    //     [SerializeField] private Material testMat2;
+    //     [SerializeField] private Material testMat3;
+    // #endregion
 
     #region Circle Generation
         [SerializeField] private GameObject headPositionerPrefab;
         [SerializeField] private GameObject torsoPositionerPrefab;
         [SerializeField] private GameObject legsPositionerPrefab;
 
-        [SerializeField] private List<GameObject> models;   // Delete this once models are in
+        private const float Z_POS_CURRENT_MODEL = -3.88f;   // Base radius
 
         private Dictionary<ModelID,GameObject> headDatabase = new Dictionary<ModelID,GameObject>();
         private Dictionary<ModelID,GameObject> torsoDatabase = new Dictionary<ModelID,GameObject>();
         private Dictionary<ModelID,GameObject> legsDatabase = new Dictionary<ModelID,GameObject>();
-
-        private const float Z_POS_CURRENT_MODEL = -3.88f;   // Base radius
     #endregion
 
     [SerializeField] private GameObject headCircle;
@@ -69,7 +67,7 @@ public class ModelSelectCircle : MonoBehaviour
 
         // Generate the models in the right positions
         float rotationPositioner = 0;
-        int tempColorPicker = 0;    // <- TEMP (DELETE ONCE MODLELS ARE IN)
+        // int tempColorPicker = 0;    // <- TEMP (DELETE ONCE MODLELS ARE IN)
 
         // Iterate through models
         foreach(ModelID modelId in System.Enum.GetValues(typeof(ModelID))) {
@@ -121,27 +119,27 @@ public class ModelSelectCircle : MonoBehaviour
             rotationPositioner += ROTATION_ANGLE;
 
             // TEMP SET COLOR - DELETE ALL OF THIS ONCE MODLELS ARE IN
-            {
-                Material tempMat = testMatDefault;
-                switch(tempColorPicker){
-                    case 1:
-                        tempMat = testMat1;
-                        break;
-                    case 2:
-                        tempMat = testMat2;
-                        break;
-                    case 3:
-                        tempMat = testMat3;
-                        break;
-                }
-                newHeadPos.GetComponentInChildren<MeshRenderer>().material = tempMat;
-                newTorsoPos.GetComponentInChildren<MeshRenderer>().material = tempMat;
-                newLegsPos.GetComponentInChildren<MeshRenderer>().material = tempMat;
-                tempColorPicker++;
-                if(tempColorPicker > 3){
-                    tempColorPicker = 0;
-                }
-            }
+            // {
+            //     Material tempMat = testMatDefault;
+            //     switch(tempColorPicker){
+            //         case 1:
+            //             tempMat = testMat1;
+            //             break;
+            //         case 2:
+            //             tempMat = testMat2;
+            //             break;
+            //         case 3:
+            //             tempMat = testMat3;
+            //             break;
+            //     }
+            //     newHeadPos.GetComponentInChildren<MeshRenderer>().material = tempMat;
+            //     newTorsoPos.GetComponentInChildren<MeshRenderer>().material = tempMat;
+            //     newLegsPos.GetComponentInChildren<MeshRenderer>().material = tempMat;
+            //     tempColorPicker++;
+            //     if(tempColorPicker > 3){
+            //         tempColorPicker = 0;
+            //     }
+            // }
         }
     }
 
@@ -181,8 +179,8 @@ public class ModelSelectCircle : MonoBehaviour
 
     public GameObject[] GetCurrentParts()
     {
-        Debug.Log(string.Format("Selected head: {0}, torso: {1}, legs: {2}",
-            currentHead.ToString(), currentTorso.ToString(), currentLegs.ToString()));
+        // Debug.Log(string.Format("Selected head: {0}, torso: {1}, legs: {2}",
+            // currentHead.ToString(), currentTorso.ToString(), currentLegs.ToString()));
 
         if(!headDatabase.ContainsKey(currentHead)){
             Debug.LogError("No head " + currentHead.ToString() + " found in database");

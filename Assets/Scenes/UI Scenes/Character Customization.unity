@@ -454,6 +454,19 @@ MonoBehaviour:
   readyButtonSprite: {fileID: 21300000, guid: 6b7b4b5dc356f7f41b1e546853c649c1, type: 3}
   cancelButtonSprite: {fileID: 21300000, guid: 8d3a957b8fb2b21439423cb5813b58ea, type: 3}
   joinCodeText: {fileID: 2057997593}
+  readyTextSprites:
+  - {fileID: 21300000, guid: efdfcdaf1451e7d4db4960b34a9d0b29, type: 3}
+  - {fileID: 21300000, guid: f9bc66b544b668a479a3ea8a9d4bc8fe, type: 3}
+  - {fileID: 21300000, guid: f280a4a0fdfd86143ba6d6c2d9406023, type: 3}
+  - {fileID: 21300000, guid: 7dde7031a6d05d44aa10eb526aa5a020, type: 3}
+  - {fileID: 21300000, guid: e22febe267ccdde46920ff497cf9112c, type: 3}
+  - {fileID: 21300000, guid: b5f99d04422938646ab70d8244111bd0, type: 3}
+  - {fileID: 21300000, guid: eb065f4c17dbfbb479dd3dd4760e51a5, type: 3}
+  - {fileID: 21300000, guid: 69d8846b79ab52141aaff9fb702d66cf, type: 3}
+  - {fileID: 21300000, guid: 83bcd1d7ff7cff5439c0349a901424ba, type: 3}
+  - {fileID: 21300000, guid: fb1e460b43a117f4bab5857ef7ef70a2, type: 3}
+  - {fileID: 21300000, guid: 5834f4e85dec8ae4185522d1fe6c76b7, type: 3}
+  - {fileID: 21300000, guid: cd38f6be1a67597479f0477129d00e7d, type: 3}
 --- !u!4 &154656282
 Transform:
   m_ObjectHideFlags: 0
@@ -3079,8 +3092,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 1, y: 0}
   m_AnchorMax: {x: 1, y: 0}
-  m_AnchoredPosition: {x: -278.19, y: 66.54401}
-  m_SizeDelta: {x: 465.81, y: 133.088}
+  m_AnchoredPosition: {x: -278.19, y: 67.772736}
+  m_SizeDelta: {x: 465.81, y: 91.3113}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &2057997593
 MonoBehaviour:
@@ -3102,10 +3115,10 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: JOIN CODE
+  m_text: 'join code: 123456'
   m_isRightToLeft: 0
-  m_fontAsset: {fileID: 11400000, guid: c4f4ab34dc93ab04aae6bfeded59c51e, type: 2}
-  m_sharedMaterial: {fileID: 2221817422826873469, guid: c4f4ab34dc93ab04aae6bfeded59c51e, type: 2}
+  m_fontAsset: {fileID: 11400000, guid: 684a3fb6bb8dc66438e88a9a2a7b8181, type: 2}
+  m_sharedMaterial: {fileID: 7853901592716079029, guid: 684a3fb6bb8dc66438e88a9a2a7b8181, type: 2}
   m_fontSharedMaterials: []
   m_fontMaterial: {fileID: 0}
   m_fontMaterials: []
@@ -3129,14 +3142,14 @@ MonoBehaviour:
   m_faceColor:
     serializedVersion: 2
     rgba: 4294967295
-  m_fontSize: 72
+  m_fontSize: 45.95
   m_fontSizeBase: 69.86
   m_fontWeight: 400
   m_enableAutoSizing: 1
   m_fontSizeMin: 18
   m_fontSizeMax: 72
-  m_fontStyle: 0
-  m_HorizontalAlignment: 1
+  m_fontStyle: 1
+  m_HorizontalAlignment: 2
   m_VerticalAlignment: 512
   m_textAlignment: 65535
   m_characterSpacing: 0

@@ -37,7 +37,9 @@ public class CharacterSelectManager : NetworkBehaviour
     [SerializeField] private Sprite cancelButtonSprite;
     [SerializeField] private TMP_Text joinCodeText;
 
-    private HashSet<GameObject> lobbyPlayerPanels = new HashSet<GameObject>();
+    public List<Sprite> readyTextSprites = new List<Sprite>();
+
+    private List<GameObject> lobbyPlayerPanels = new List<GameObject>();
     
     private bool allPlayersInLobby;
     private Dictionary<ulong, bool> clientsInLobby;
@@ -45,11 +47,9 @@ public class CharacterSelectManager : NetworkBehaviour
     void Start()
     {
         playerIsReady = false;
-        // SetStats();
-        
-        // DisplayNewPlayer(); // TODO: Pass in this player's info
+        SetStats();
 
-        joinCodeText.text = GameManager.Instance.joinCode.Value;
+        joinCodeText.text = "join: " + GameManager.Instance.joinCode.Value.ToString().ToLower();
         Debug.Log(GameManager.Instance.GetUsername(NetworkManager.Singleton.LocalClientId));
     }
 
@@ -133,7 +133,7 @@ public class CharacterSelectManager : NetworkBehaviour
 
     public void QuitButton()
     {
-        // TODO: Alert server you left the lobby - tell all the clients to remove this player - and return to main menu
+        NetworkManager.Singleton.Shutdown();
     }
     #endregion
 
@@ -154,7 +154,7 @@ public class CharacterSelectManager : NetworkBehaviour
 
             //Server will be notified when a client connects
             NetworkManager.OnClientConnectedCallback += OnClientConnectedCallback;
-            // NetworkManager.OnClientDisconnectedCallback += OnClientDisconnectedCallback; // TODO
+            NetworkManager.OnClientDisconnectCallback += OnClientDisconnectedCallback;
             SceneTransitionHandler.Instance.OnClientLoadedScene += ClientLoadedScene;
         }
 
@@ -166,10 +166,9 @@ public class CharacterSelectManager : NetworkBehaviour
     {
         ClearLobbyPanels();
 
-        // TODO
-        // foreach(Player p in NetworkManager.Instance.players){
-        //     DisplayNewPlayer(p);
-        // }
+        foreach(ulong clientID in NetworkManager.Singleton.ConnectedClientsIds){
+            DisplayNewPlayer(clientID);
+        }
     }
 
     /// <summary>
@@ -329,22 +328,28 @@ public class CharacterSelectManager : NetworkBehaviour
         }
     }
 
-    public void DisplayNewPlayer(Player p) // TODO: pass in player number or Player or something
+    public void DisplayNewPlayer(ulong clientID)
     {
+        string username = GameManager.Instance.GetUsername(clientID);
+
         GameObject newPanel = Instantiate(playerPanelPrefab, new Vector3(0, 0, 0), Quaternion.identity, lobbyPanelBackground.transform);
         lobbyPlayerPanels.Add(newPanel);
-        newPanel.GetComponent<LobbyPlayerPanel>().SetValues(p);
+        newPanel.GetComponent<LobbyPlayerPanel>().SetValues(username);
 
-        // if player is ready
-        // newPanel.GetComponent<lobbyPlayerPanel>().PlayerIsReady(true);
+        // If player is ready
+        if( clientsInLobby[clientID] ){
+            Sprite s = readyTextSprites[Random.Range(0,readyTextSprites.Count)];
+            newPanel.GetComponent<LobbyPlayerPanel>().PlayerIsReady(true,s);
+        }
     }
 
     public void ClearLobbyPanels()
     {
         foreach (GameObject playerPanel in lobbyPlayerPanels)
         {
-            // TODO: DELETE THE PLAYER PANEL GAME OBJECT
+            Destroy(playerPanel);
         }
+        lobbyPlayerPanels.Clear();
     }
     #endregion
 }
