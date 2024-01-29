@@ -71,7 +71,7 @@ public class MainMenu : MonoBehaviour
             if (joinCode != null)
             {
                 GameManager.Instance.joinCode.Value = joinCode;
-                GameManager.Instance.cachedUsername = hostUsernameInputField.text;
+                GameManager.Instance.AddUsername(NetworkManager.Singleton.LocalClientId, hostUsernameInputField.text);
                 // NetworkManager.Singleton.GetComponent<GameManager>().SetJoinCodeServerRpc(joinCode);
                 SceneTransitionHandler.Instance.RegisterCallbacks();
                 SceneTransitionHandler.Instance.SwitchScene(SceneTransitionHandler.SceneStates.Lobby);
