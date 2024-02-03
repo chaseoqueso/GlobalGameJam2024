@@ -44,6 +44,10 @@ public class GameManager : NetworkBehaviour
     public Dictionary<ModelID,GameObject> torsoDatabase = new Dictionary<ModelID,GameObject>();
     public Dictionary<ModelID,GameObject> legsDatabase = new Dictionary<ModelID,GameObject>();
 
+    public float roundDuration = 60;
+    public float timer { get; private set; }
+    private bool gameHasStarted;
+
     private Dictionary<ulong, string> usernameDict = new();
     private Dictionary<ulong, PlayerModels> modelDict = new();
 
@@ -55,6 +59,17 @@ public class GameManager : NetworkBehaviour
         }
         Instance = this;
         DontDestroyOnLoad(this);
+    }
+
+    void Update()
+    {
+        if(gameHasStarted)
+            UpdateTimer();
+    }
+
+    public HashSet<ulong> GetClientIDs()
+    {
+        return new HashSet<ulong>(usernameDict.Keys);
     }
 
 #region Usernames
@@ -245,7 +260,7 @@ public class GameManager : NetworkBehaviour
         return modelDict[clientId];
     }
 
-    [ServerRpc]
+    [ServerRpc(RequireOwnership = false)]
     private void SetPlayerModelServerRpc(ulong clientId, PlayerModels models)
     {
         SetPlayerModelInternal(clientId, models);
@@ -289,6 +304,53 @@ public class GameManager : NetworkBehaviour
         {
             modelDict.Remove(clientId);
         }
+    }
+#endregion
+
+#region Timer
+    private void UpdateTimer()
+    {
+        if(timer > 0)
+        {
+            timer -= Time.deltaTime;    // Timer is purely visual on the client
+            if(timer < 0)
+                timer = 0;
+
+            if(IsClient)
+            {
+                GameUI.Instance.SetTime(timer);
+            }
+
+            if(IsServer && timer <= 0)
+            {
+                EndGameClientRpc();
+            }
+        }
+    }
+
+    [ServerRpc]
+    public void StartTimerServerRpc()
+    {
+        StartTimer();
+        StartTimerClientRpc();
+    }
+
+    [ClientRpc]
+    private void StartTimerClientRpc()
+    {
+        StartTimer();
+    }
+
+    private void StartTimer()
+    {
+        timer = roundDuration;
+        gameHasStarted = true;
+    }
+
+    [ClientRpc]
+    private void EndGameClientRpc()
+    {
+        // TODO end the game
     }
 #endregion
 

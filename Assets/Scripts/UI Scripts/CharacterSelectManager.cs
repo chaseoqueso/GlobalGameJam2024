@@ -166,7 +166,7 @@ public class CharacterSelectManager : NetworkBehaviour
     {
         ClearLobbyPanels();
 
-        foreach(ulong clientID in NetworkManager.Singleton.ConnectedClientsIds){
+        foreach(ulong clientID in GameManager.Instance.GetClientIDs()){
             DisplayNewPlayer(clientID);
         }
     }

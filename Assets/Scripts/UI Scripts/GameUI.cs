@@ -81,9 +81,10 @@ public class GameUI : MonoBehaviour
     #endregion
 
     #region Timer
-        public void SetTime()
+        public void SetTime(float time)
         {
-            timerText.text = "0" + ":" + "00";
+            float seconds = Mathf.FloorToInt(time%60);
+            timerText.text = $"{Mathf.FloorToInt(time/60)}:{(seconds >= 10 ? seconds : "0" + seconds)}";
         }
     #endregion
 
