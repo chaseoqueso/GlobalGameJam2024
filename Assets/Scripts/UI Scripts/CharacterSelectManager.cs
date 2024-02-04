@@ -143,8 +143,20 @@ public class CharacterSelectManager : NetworkBehaviour
     {
         clientsInLobby = new();
 
-        //Always add ourselves to the list at first
-        clientsInLobby.Add(NetworkManager.LocalClientId, false);
+        var existingClientIDs = GameManager.Instance.GetClientIDs();
+
+        if(existingClientIDs.Count > 0)
+        {
+            foreach(ulong clientID in existingClientIDs)
+            {
+                clientsInLobby.Add(clientID, false);
+            }
+        }
+        else
+        {
+            //Always add ourselves to the list at first
+            clientsInLobby.Add(NetworkManager.LocalClientId, false);
+        }
 
         //If we are hosting, then handle the server side for detecting when clients have connected
         //and when their lobby scenes are finished loading.
@@ -166,7 +178,7 @@ public class CharacterSelectManager : NetworkBehaviour
     {
         ClearLobbyPanels();
 
-        foreach(ulong clientID in NetworkManager.Singleton.ConnectedClientsIds){
+        foreach(ulong clientID in GameManager.Instance.GetClientIDs()){
             DisplayNewPlayer(clientID);
         }
     }
@@ -350,6 +362,16 @@ public class CharacterSelectManager : NetworkBehaviour
             Destroy(playerPanel);
         }
         lobbyPlayerPanels.Clear();
+    }
+
+    public override void OnDestroy()
+    {
+        if (IsServer)
+        {
+            NetworkManager.OnClientConnectedCallback -= OnClientConnectedCallback;
+            NetworkManager.OnClientDisconnectCallback -= OnClientDisconnectedCallback;
+            SceneTransitionHandler.Instance.OnClientLoadedScene -= ClientLoadedScene;
+        }
     }
     #endregion
 }

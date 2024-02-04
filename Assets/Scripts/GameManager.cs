@@ -44,8 +44,14 @@ public class GameManager : NetworkBehaviour
     public Dictionary<ModelID,GameObject> torsoDatabase = new Dictionary<ModelID,GameObject>();
     public Dictionary<ModelID,GameObject> legsDatabase = new Dictionary<ModelID,GameObject>();
 
+    public float roundDuration = 10;
+    public float timer { get; private set; }
+    private bool gameHasStarted;
+
     private Dictionary<ulong, string> usernameDict = new();
     private Dictionary<ulong, PlayerModels> modelDict = new();
+    private Dictionary<ulong, Player> playerDict = new();
+    private SortedList<ulong, int> scoreboard = new();
 
     void Awake()
     {
@@ -55,6 +61,56 @@ public class GameManager : NetworkBehaviour
         }
         Instance = this;
         DontDestroyOnLoad(this);
+    }
+
+    void Update()
+    {
+        if(gameHasStarted)
+            UpdateTimer();
+    }
+
+    public HashSet<ulong> GetClientIDs()
+    {
+        return new HashSet<ulong>(usernameDict.Keys);
+    }
+
+    public void AddPlayer(ulong clientId, Player player)
+    {
+        playerDict.Add(clientId, player);
+    }
+
+    public Player GetPlayer(ulong clientId)
+    {
+        return playerDict[clientId];
+    }
+
+    public void UpdatePlayerScore(ulong clientID, int score)
+    {
+        if (scoreboard.ContainsKey(clientID))
+        {
+            scoreboard[clientID] = score;
+        }
+        else
+        {
+            scoreboard.Add(clientID, score);
+        }
+
+        if (IsClient && scoreboard.Count > 1)
+        {
+            int place = scoreboard.IndexOfKey(clientID) + 1;
+            bool isInFirst = place == 1;
+
+            string firstPlayerName = GetUsername(isInFirst ? clientID : scoreboard.ElementAt(0).Key);
+            int firstPlayerScore = isInFirst ? scoreboard[clientID] : scoreboard.ElementAt(0).Value;
+            string otherPlayerName = GetUsername(isInFirst ? scoreboard.ElementAt(1).Key : clientID);
+            int otherPlayerScore = isInFirst ? scoreboard.ElementAt(1).Value : scoreboard[clientID];
+            
+            GameUI.Instance.UpdateScoreboard(firstPlayerName, 
+                                            firstPlayerScore, 
+                                            otherPlayerName, 
+                                            otherPlayerScore, 
+                                            place);
+        }
     }
 
 #region Usernames
@@ -245,7 +301,7 @@ public class GameManager : NetworkBehaviour
         return modelDict[clientId];
     }
 
-    [ServerRpc]
+    [ServerRpc(RequireOwnership = false)]
     private void SetPlayerModelServerRpc(ulong clientId, PlayerModels models)
     {
         SetPlayerModelInternal(clientId, models);
@@ -289,6 +345,77 @@ public class GameManager : NetworkBehaviour
         {
             modelDict.Remove(clientId);
         }
+    }
+#endregion
+
+#region Timer
+    private void UpdateTimer()
+    {
+        if(timer > 0)
+        {
+            timer -= Time.deltaTime;    // Timer is purely visual on the client
+            if(timer < 0)
+                timer = 0;
+
+            if(IsClient)
+            {
+                GameUI.Instance.SetTime(timer);
+            }
+
+            if(IsServer && timer <= 0)
+            {
+                EndGameServerRpc();
+            }
+        }
+    }
+
+    [ServerRpc]
+    public void StartTimerServerRpc()
+    {
+        StartTimer();
+        StartTimerClientRpc();
+    }
+
+    [ClientRpc]
+    private void StartTimerClientRpc()
+    {
+        StartTimer();
+    }
+
+    private void StartTimer()
+    {
+        timer = roundDuration;
+        gameHasStarted = true;
+    }
+
+    [ServerRpc]
+    private void EndGameServerRpc()
+    {
+        EndGame();
+        EndGameClientRpc();
+    }
+
+    [ClientRpc]
+    private void EndGameClientRpc()
+    {
+        GameUI.Instance.ToggleGameOverUI(true);
+        Cursor.lockState = CursorLockMode.None;
+        Cursor.visible = true;
+        Invoke("EndGame", 0.5f);
+    }
+
+    private void EndGame()
+    {
+        Time.timeScale = 0;
+        SceneTransitionHandler.Instance.OnSceneStateChanged += ResetGame;
+    }
+
+    private void ResetGame(SceneTransitionHandler.SceneStates newState)
+    {
+        playerDict.Clear();
+        scoreboard.Clear();
+        Time.timeScale = 1;
+        SceneTransitionHandler.Instance.OnSceneStateChanged -= ResetGame;
     }
 #endregion
 

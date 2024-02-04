@@ -37,8 +37,7 @@ public class GameUI : MonoBehaviour
             Instance = this;
         }
 
-        // TODO: Set default values from player info
-        // healthBar.maxValue = player.health;
+        healthBar.maxValue = Player.maxHealth;
         SetHealthBar(healthBar.maxValue);
 
         SetCharge(0f);
@@ -53,6 +52,8 @@ public class GameUI : MonoBehaviour
 
             healthBar.value = value;
             CheckHealthStatus();
+
+            Debug.Log(healthBar.value);
         }
 
         public void IncrementHealth(float value)
@@ -81,9 +82,10 @@ public class GameUI : MonoBehaviour
     #endregion
 
     #region Timer
-        public void SetTime()
+        public void SetTime(float time)
         {
-            timerText.text = "0" + ":" + "00";
+            float seconds = Mathf.FloorToInt(time%60);
+            timerText.text = $"{Mathf.FloorToInt(time/60)}:{(seconds >= 10 ? seconds : "0" + seconds)}";
         }
     #endregion
 
@@ -91,10 +93,10 @@ public class GameUI : MonoBehaviour
         // Called if YOUR place changes, or if FIRST place changes
         public void UpdateScoreboard(string firstPlayerName, int firstScore, string secondPlayerName, int secondScore, int thisPlayersPlace)
         {
-            scoreboardText1.text = " 1st  " + firstPlayerName + " - " + firstScore + "\n";
+            scoreboardText1.text = " 1st  " + firstPlayerName + " / " + firstScore + "\n";
 
             if(thisPlayersPlace == 1){
-                scoreboardText2.text += "2nd " + secondPlayerName;
+                scoreboardText2.text = "2nd " + secondPlayerName + " / " + secondScore;
             }
             else{
                 string placeStr = " " + thisPlayersPlace;
@@ -107,7 +109,7 @@ public class GameUI : MonoBehaviour
                 else{
                     placeStr += "th ";
                 }
-                scoreboardText2.text += placeStr + secondPlayerName + " - " + secondScore;
+                scoreboardText2.text = placeStr + secondPlayerName + " - " + secondScore;
             }
         }
     #endregion

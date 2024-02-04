@@ -21,9 +21,16 @@ public class ArenaManager : NetworkBehaviour
         {
             foreach(ulong clientId in NetworkManager.Singleton.ConnectedClientsIds)
             {
-                GameObject player = Instantiate(playerPrefab, new Vector3(0, 10, 0), Quaternion.identity);
+                GameObject player = Instantiate(playerPrefab, new Vector3(0, 10, 0), Quaternion.identity);  // TODO change this to actual spawn points
                 player.GetComponent<NetworkObject>().SpawnAsPlayerObject(clientId);
             }
+
+            GameManager.Instance.StartTimerServerRpc();
         }
+    }
+
+    void OnDestroy()
+    {
+        SceneTransitionHandler.Instance.OnClientLoadedScene -= OnClientLoadedScene;
     }
 }

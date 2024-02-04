@@ -10,14 +10,16 @@ public class Player : NetworkBehaviour
     [HideInInspector] public Rigidbody rb;
 
     #region Stats
-    private float maxHealth = 100f;
-    private float currHealth;
+    public static readonly float maxHealth = 100f;
+    private NetworkVariable<float> currHealth = new();
 
     private bool isDead = false;
     private float respawnTimer = 5f;
     private float currRespawnTimer;
 
-    public int score = 0;
+    public int score { get => kills.Value - deaths.Value; }
+    public NetworkVariable<int> deaths = new(0);
+    public NetworkVariable<int> kills = new(0);
     private float recentHit = 0f;
     private Player nemesis;  // Last player that hit you
     private float recentHitTimer = 1f;
@@ -53,9 +55,9 @@ public class Player : NetworkBehaviour
         {
             return;
         }
-        currHealth -= damage;
+        currHealth.Value -= damage;
 
-        Debug.Log(string.Format("Took {0} damage. Health left: {1}", damage, currHealth));
+        Debug.Log(string.Format("Took {0} damage. Health left: {1}", damage, currHealth.Value));
         knockback(impactSpeed, direction);
 
 
@@ -66,7 +68,7 @@ public class Player : NetworkBehaviour
             currRecentHitTimer = recentHitTimer;
         }
 
-        if (currHealth <= 0)
+        if (currHealth.Value <= 0)
         {
             die();
         }
@@ -88,13 +90,14 @@ public class Player : NetworkBehaviour
         Debug.Log("Dead... Cue the Wilhelm Scream.");
         currRespawnTimer = respawnTimer;
         isDead = true;
+        loseScore();
         gameObject.GetComponent<SphereCollider>().enabled = false;
     }
 
     public void respawn()
     {
         Debug.Log("Back from the grave.");
-        currHealth = maxHealth;
+        currHealth.Value = maxHealth;
         isDead = false;
         gameObject.GetComponent<SphereCollider>().enabled = true;
 
@@ -113,9 +116,10 @@ public class Player : NetworkBehaviour
 
     public void loseScore()
     {
-        score--;
-        nemesis.score++;
-        Debug.Log(string.Format("Score transfer complete. Current Score: {0}", score));
+        deaths.Value++;
+        if(nemesis != null)
+            nemesis.kills.Value++;
+        Debug.Log($"Score transfer complete. Current Score: {score}");
     }
     #endregion
 
@@ -126,7 +130,7 @@ public class Player : NetworkBehaviour
 
     private void InstantiateParts()
     {
-        PlayerModels models = GameManager.Instance.GetPlayerModels(NetworkManager.Singleton.LocalClientId);
+        PlayerModels models = GameManager.Instance.GetPlayerModels(OwnerClientId);
 
         Transform head_slot = model.transform.GetChild(0);
         head = GameManager.Instance.headDatabase[models.head];
@@ -243,17 +247,23 @@ public class Player : NetworkBehaviour
     private bool dashing;
     #endregion
 
-    void Awake()
+    public override void OnNetworkSpawn()
     {
         rb = GetComponent<Rigidbody>();
         InstantiateParts();
         GenerateStats();
 
-        currHealth = maxHealth;
-    }
+        if(IsServer)
+        {
+            currHealth.Value = maxHealth;
+        }
+        
+        GameManager.Instance.AddPlayer(OwnerClientId, this);
+        GameManager.Instance.UpdatePlayerScore(OwnerClientId, 0);
+        kills.OnValueChanged += (int old, int current) => GameManager.Instance.UpdatePlayerScore(OwnerClientId, current);
+        deaths.OnValueChanged += (int old, int current) => GameManager.Instance.UpdatePlayerScore(OwnerClientId, current);
+        GetComponent<NetworkObject>().DestroyWithScene = true;
 
-    void Start()
-    {
         if(IsLocalPlayer)
         {
             CinemachineFreeLook freeLook = FindObjectOfType<CinemachineFreeLook>();
@@ -262,6 +272,8 @@ public class Player : NetworkBehaviour
 
             Cursor.lockState = CursorLockMode.Locked;
             Cursor.visible = false;
+
+            currHealth.OnValueChanged += (float _, float current) => GameUI.Instance.SetHealthBar(current);
         }
     }
 
@@ -479,47 +491,50 @@ public class Player : NetworkBehaviour
 
     void OnCollisionEnter(Collision collision)
     {
-        if(dashing)
+        if(IsServer)
         {
-            dashDirection = Vector3.Reflect(dashDirection, collision.GetContact(0).normal);
-        }
-
-        if(dashing || horVelocity.magnitude > moveSpeed)
-        {
-            horVelocity = Vector3.Reflect(horVelocity.normalized, collision.GetContact(0).normal) * horVelocity.magnitude * 0.6f;
-        }
-
-        // Hit a player
-        Player collidingPlayer = collision.gameObject.GetComponent<Player>();
-        if (collidingPlayer != null)
-        {
-            Debug.Log("Hit a player");
-            Vector3 collidingPlayerVelocity = collidingPlayer.GetComponent<Rigidbody>().velocity;
-
-            // Get the speed of the colliding player in the direction of *this* player
-            float incomingForce = Vector3.Dot(collidingPlayerVelocity, collision.GetContact(0).normal);
-
-            if (incomingForce > 0)
+            if(dashing)
             {
-                Debug.Log("or rather, they hit us.");
-                nemesis = collidingPlayer;
-                takeDamage(incomingForce, collision.GetContact(0).normal, collidingPlayer.dashing, false);
+                dashDirection = Vector3.Reflect(dashDirection, collision.GetContact(0).normal);
             }
-        }
 
-        // Hit a wall
-        else
-        {
-            Debug.Log("Hit a wall");
-            if (recentHit > 0)
+            if(dashing || horVelocity.magnitude > moveSpeed)
             {
-                Debug.Log("...hard");
-                takeDamage(collision.relativeVelocity.magnitude, collision.GetContact(0).normal, false, true);
+                horVelocity = Vector3.Reflect(horVelocity.normalized, collision.GetContact(0).normal) * horVelocity.magnitude * 0.6f;
             }
+
+            // Hit a player
+            Player collidingPlayer = collision.gameObject.GetComponent<Player>();
+            if (collidingPlayer != null)
+            {
+                Debug.Log("Hit a player");
+                Vector3 collidingPlayerVelocity = collidingPlayer.GetComponent<Rigidbody>().velocity;
+
+                // Get the speed of the colliding player in the direction of *this* player
+                float incomingForce = Vector3.Dot(collidingPlayerVelocity, collision.GetContact(0).normal);
+
+                if (incomingForce > 0)
+                {
+                    Debug.Log("or rather, they hit us.");
+                    nemesis = collidingPlayer;
+                    takeDamage(incomingForce, collision.GetContact(0).normal, collidingPlayer.dashing, false);
+                }
+            }
+
+            // Hit a wall
             else
             {
-                Debug.Log("Take damage anyway for testing");
-                takeDamage(collision.relativeVelocity.magnitude, collision.GetContact(0).normal, false, true);
+                Debug.Log("Hit a wall");
+                if (recentHit > 0)
+                {
+                    Debug.Log("...hard");
+                    takeDamage(collision.relativeVelocity.magnitude, collision.GetContact(0).normal, false, true);
+                }
+                else
+                {
+                    Debug.Log("Take damage anyway for testing");
+                    takeDamage(collision.relativeVelocity.magnitude, collision.GetContact(0).normal, false, true);
+                }
             }
         }
     }   
