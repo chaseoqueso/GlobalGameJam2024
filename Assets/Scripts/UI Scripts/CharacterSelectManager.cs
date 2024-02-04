@@ -143,8 +143,20 @@ public class CharacterSelectManager : NetworkBehaviour
     {
         clientsInLobby = new();
 
-        //Always add ourselves to the list at first
-        clientsInLobby.Add(NetworkManager.LocalClientId, false);
+        var existingClientIDs = GameManager.Instance.GetClientIDs();
+
+        if(existingClientIDs.Count > 0)
+        {
+            foreach(ulong clientID in existingClientIDs)
+            {
+                clientsInLobby.Add(clientID, false);
+            }
+        }
+        else
+        {
+            //Always add ourselves to the list at first
+            clientsInLobby.Add(NetworkManager.LocalClientId, false);
+        }
 
         //If we are hosting, then handle the server side for detecting when clients have connected
         //and when their lobby scenes are finished loading.

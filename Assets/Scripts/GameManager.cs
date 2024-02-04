@@ -398,10 +398,10 @@ public class GameManager : NetworkBehaviour
     [ClientRpc]
     private void EndGameClientRpc()
     {
-        EndGame();
         GameUI.Instance.ToggleGameOverUI(true);
         Cursor.lockState = CursorLockMode.None;
         Cursor.visible = true;
+        Invoke("EndGame", 0.5f);
     }
 
     private void EndGame()

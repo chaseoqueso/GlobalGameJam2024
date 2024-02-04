@@ -262,6 +262,7 @@ public class Player : NetworkBehaviour
         GameManager.Instance.UpdatePlayerScore(OwnerClientId, 0);
         kills.OnValueChanged += (int old, int current) => GameManager.Instance.UpdatePlayerScore(OwnerClientId, current);
         deaths.OnValueChanged += (int old, int current) => GameManager.Instance.UpdatePlayerScore(OwnerClientId, current);
+        GetComponent<NetworkObject>().DestroyWithScene = true;
 
         if(IsLocalPlayer)
         {

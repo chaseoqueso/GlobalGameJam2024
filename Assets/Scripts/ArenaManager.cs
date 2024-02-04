@@ -28,4 +28,9 @@ public class ArenaManager : NetworkBehaviour
             GameManager.Instance.StartTimerServerRpc();
         }
     }
+
+    void OnDestroy()
+    {
+        SceneTransitionHandler.Instance.OnClientLoadedScene -= OnClientLoadedScene;
+    }
 }

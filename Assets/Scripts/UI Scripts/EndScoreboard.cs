@@ -12,7 +12,7 @@ public class EndScoreboard : NetworkBehaviour
 
     void OnEnable()
     {
-        newGameButton.SetActive(IsHost || IsServer);
+        newGameButton.SetActive(NetworkManager.Singleton.IsHost);
 
         foreach(ulong clientID in GameManager.Instance.GetClientIDs()){
             GameObject newPlayerPanel = Instantiate(playerScorePanelPrefab, new Vector3(0,0,0), Quaternion.identity, scoresGrid.transform);
