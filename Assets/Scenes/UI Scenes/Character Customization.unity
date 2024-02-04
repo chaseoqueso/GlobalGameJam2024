@@ -1645,12 +1645,12 @@ MonoBehaviour:
     m_SelectOnDown: {fileID: 0}
     m_SelectOnLeft: {fileID: 0}
     m_SelectOnRight: {fileID: 0}
-  m_Transition: 2
+  m_Transition: 1
   m_Colors:
     m_NormalColor: {r: 1, g: 1, b: 1, a: 1}
-    m_HighlightedColor: {r: 0.9607843, g: 0.9607843, b: 0.9607843, a: 1}
+    m_HighlightedColor: {r: 0.78431374, g: 0.78431374, b: 0.78431374, a: 1}
     m_PressedColor: {r: 0.78431374, g: 0.78431374, b: 0.78431374, a: 1}
-    m_SelectedColor: {r: 0.9607843, g: 0.9607843, b: 0.9607843, a: 1}
+    m_SelectedColor: {r: 0.78431374, g: 0.78431374, b: 0.78431374, a: 1}
     m_DisabledColor: {r: 0.78431374, g: 0.78431374, b: 0.78431374, a: 0.5019608}
     m_ColorMultiplier: 1
     m_FadeDuration: 0.1
@@ -2391,20 +2391,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6547c15b49ffeb640a60d23d54c3adb4, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  testMatDefault: {fileID: 2100000, guid: f4ecd07f297bb39439d7a76bff373831, type: 2}
-  testMat1: {fileID: 2100000, guid: fd32d89c5dd037c4398ac4c7c8b6e015, type: 2}
-  testMat2: {fileID: 2100000, guid: db2e254ed5def32418339293a89b2cbc, type: 2}
-  testMat3: {fileID: 2100000, guid: b0107e315ef1855488d3f19d02e98cdc, type: 2}
   headPositionerPrefab: {fileID: 2590233767684334738, guid: f5e7558acaece5e469934ce77a835cf0, type: 3}
   torsoPositionerPrefab: {fileID: 328894149241562527, guid: f91d728a9bacfe9468351d66507b13c3, type: 3}
   legsPositionerPrefab: {fileID: 6094990405504585094, guid: 6040fba55d0ca7e449bd64bb22838777, type: 3}
-  models:
-  - {fileID: 2590233767684334738, guid: f5e7558acaece5e469934ce77a835cf0, type: 3}
-  - {fileID: 2590233767684334738, guid: f5e7558acaece5e469934ce77a835cf0, type: 3}
-  - {fileID: 2590233767684334738, guid: f5e7558acaece5e469934ce77a835cf0, type: 3}
-  - {fileID: 2590233767684334738, guid: f5e7558acaece5e469934ce77a835cf0, type: 3}
-  - {fileID: 2590233767684334738, guid: f5e7558acaece5e469934ce77a835cf0, type: 3}
-  - {fileID: 2590233767684334738, guid: f5e7558acaece5e469934ce77a835cf0, type: 3}
   headCircle: {fileID: 118079454}
   torsoCircle: {fileID: 1496395418}
   legsCircle: {fileID: 1511984502}

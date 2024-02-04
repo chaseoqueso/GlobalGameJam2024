@@ -213,11 +213,10 @@ public class GameUI : MonoBehaviour
     #endregion
 
     #region Game Over UI
+        // TODO: Call this for all players
         public void ToggleGameOverUI(bool set)
         {
             gameOverUI.SetActive(set);
-
-            // TODO: Buttons only visible - or at least only interactable - for host
         }
     #endregion
 }
