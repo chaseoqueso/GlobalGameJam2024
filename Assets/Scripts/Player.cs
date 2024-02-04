@@ -55,7 +55,7 @@ public class Player : NetworkBehaviour
         }
         currHealth.Value -= damage;
 
-        Debug.Log(string.Format("Took {0} damage. Health left: {1}", damage, currHealth));
+        Debug.Log(string.Format("Took {0} damage. Health left: {1}", damage, currHealth.Value));
         knockback(impactSpeed, direction);
 
 
@@ -117,7 +117,7 @@ public class Player : NetworkBehaviour
         score.Value--;
         if(nemesis != null)
             nemesis.score.Value++;
-        Debug.Log(string.Format("Score transfer complete. Current Score: {0}", score));
+        Debug.Log($"Score transfer complete. Current Score: {score.Value}");
     }
     #endregion
 

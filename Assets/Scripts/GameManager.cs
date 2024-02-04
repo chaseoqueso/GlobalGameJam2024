@@ -75,12 +75,16 @@ public class GameManager : NetworkBehaviour
 
     public void UpdatePlayerScore(ulong clientID, int score)
     {
-        if(!scoreboard.ContainsKey(clientID))
+        if (scoreboard.ContainsKey(clientID))
+        {
+            scoreboard[clientID] = score;
+        }
+        else
         {
             scoreboard.Add(clientID, score);
         }
 
-        if(IsClient && scoreboard.Count > 1)
+        if (IsClient && scoreboard.Count > 1)
         {
             int place = scoreboard.IndexOfKey(clientID) + 1;
             bool isInFirst = place == 1;

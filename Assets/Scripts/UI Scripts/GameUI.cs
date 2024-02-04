@@ -91,10 +91,10 @@ public class GameUI : MonoBehaviour
         // Called if YOUR place changes, or if FIRST place changes
         public void UpdateScoreboard(string firstPlayerName, int firstScore, string secondPlayerName, int secondScore, int thisPlayersPlace)
         {
-            scoreboardText1.text = " 1st  " + firstPlayerName + " - " + firstScore + "\n";
+            scoreboardText1.text = " 1st  " + firstPlayerName + " / " + firstScore + "\n";
 
             if(thisPlayersPlace == 1){
-                scoreboardText2.text = "2nd " + secondPlayerName;
+                scoreboardText2.text = "2nd " + secondPlayerName + " / " + secondScore;
             }
             else{
                 string placeStr = " " + thisPlayersPlace;
