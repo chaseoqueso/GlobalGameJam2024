@@ -245,7 +245,7 @@ public class Player : NetworkBehaviour
     private bool dashing;
     #endregion
 
-    void Awake()
+    public override void OnNetworkSpawn()
     {
         rb = GetComponent<Rigidbody>();
         InstantiateParts();
@@ -256,17 +256,9 @@ public class Player : NetworkBehaviour
             currHealth.Value = maxHealth;
         }
         
-        if(IsClient)
-        {
-            currHealth.OnValueChanged += (float _, float current) => GameUI.Instance.SetHealthBar(current);
-        }
-        
         GameManager.Instance.UpdatePlayerScore(OwnerClientId, 0);
         score.OnValueChanged += (int old, int current) => GameManager.Instance.UpdatePlayerScore(OwnerClientId, current);
-    }
 
-    void Start()
-    {
         if(IsLocalPlayer)
         {
             CinemachineFreeLook freeLook = FindObjectOfType<CinemachineFreeLook>();
@@ -275,6 +267,8 @@ public class Player : NetworkBehaviour
 
             Cursor.lockState = CursorLockMode.Locked;
             Cursor.visible = false;
+
+            currHealth.OnValueChanged += (float _, float current) => GameUI.Instance.SetHealthBar(current);
         }
     }
 

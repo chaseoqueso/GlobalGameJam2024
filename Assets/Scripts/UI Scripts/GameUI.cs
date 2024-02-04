@@ -52,6 +52,8 @@ public class GameUI : MonoBehaviour
 
             healthBar.value = value;
             CheckHealthStatus();
+
+            Debug.Log(healthBar.value);
         }
 
         public void IncrementHealth(float value)

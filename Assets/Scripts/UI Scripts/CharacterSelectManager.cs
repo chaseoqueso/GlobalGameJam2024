@@ -352,7 +352,7 @@ public class CharacterSelectManager : NetworkBehaviour
         lobbyPlayerPanels.Clear();
     }
 
-    public override void OnNetworkDespawn()
+    public override void OnDestroy()
     {
         if (IsServer)
         {
