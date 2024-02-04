@@ -37,8 +37,7 @@ public class GameUI : MonoBehaviour
             Instance = this;
         }
 
-        // TODO: Set default values from player info
-        // healthBar.maxValue = player.health;
+        healthBar.maxValue = Player.maxHealth;
         SetHealthBar(healthBar.maxValue);
 
         SetCharge(0f);
@@ -95,7 +94,7 @@ public class GameUI : MonoBehaviour
             scoreboardText1.text = " 1st  " + firstPlayerName + " - " + firstScore + "\n";
 
             if(thisPlayersPlace == 1){
-                scoreboardText2.text += "2nd " + secondPlayerName;
+                scoreboardText2.text = "2nd " + secondPlayerName;
             }
             else{
                 string placeStr = " " + thisPlayersPlace;
@@ -108,7 +107,7 @@ public class GameUI : MonoBehaviour
                 else{
                     placeStr += "th ";
                 }
-                scoreboardText2.text += placeStr + secondPlayerName + " - " + secondScore;
+                scoreboardText2.text = placeStr + secondPlayerName + " - " + secondScore;
             }
         }
     #endregion

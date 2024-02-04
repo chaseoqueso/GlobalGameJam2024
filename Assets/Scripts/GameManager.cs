@@ -50,6 +50,7 @@ public class GameManager : NetworkBehaviour
 
     private Dictionary<ulong, string> usernameDict = new();
     private Dictionary<ulong, PlayerModels> modelDict = new();
+    private SortedList<ulong, int> scoreboard = new();
 
     void Awake()
     {
@@ -70,6 +71,31 @@ public class GameManager : NetworkBehaviour
     public HashSet<ulong> GetClientIDs()
     {
         return new HashSet<ulong>(usernameDict.Keys);
+    }
+
+    public void UpdatePlayerScore(ulong clientID, int score)
+    {
+        if(!scoreboard.ContainsKey(clientID))
+        {
+            scoreboard.Add(clientID, score);
+        }
+
+        if(IsClient && scoreboard.Count > 1)
+        {
+            int place = scoreboard.IndexOfKey(clientID) + 1;
+            bool isInFirst = place == 1;
+
+            string firstPlayerName = GetUsername(isInFirst ? clientID : scoreboard.ElementAt(0).Key);
+            int firstPlayerScore = isInFirst ? scoreboard[clientID] : scoreboard.ElementAt(0).Value;
+            string otherPlayerName = GetUsername(isInFirst ? scoreboard.ElementAt(1).Key : clientID);
+            int otherPlayerScore = isInFirst ? scoreboard.ElementAt(1).Value : scoreboard[clientID];
+            
+            GameUI.Instance.UpdateScoreboard(firstPlayerName, 
+                                            firstPlayerScore, 
+                                            otherPlayerName, 
+                                            otherPlayerScore, 
+                                            place);
+        }
     }
 
 #region Usernames

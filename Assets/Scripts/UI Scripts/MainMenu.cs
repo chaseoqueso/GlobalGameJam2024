@@ -99,9 +99,9 @@ public class MainMenu : MonoBehaviour
     public async void TryJoinGame()
     {
         RelayManager relayManager = NetworkManager.Singleton.GetComponent<RelayManager>();
-        NetworkManager.Singleton.OnClientConnectedCallback += GameManager.Instance.AddCachedUsername;
         if(relayManager.IsRelayEnabled)
         {
+            NetworkManager.Singleton.OnClientConnectedCallback += GameManager.Instance.AddCachedUsername;
             if (await relayManager.StartClientWithRelay(codeInputField.text))
             {
                 GameManager.Instance.cachedUsername = usernameInputField.text;
@@ -113,6 +113,7 @@ public class MainMenu : MonoBehaviour
             else
             {
                 menuStatusText.text = "Invalid Game Code";
+                NetworkManager.Singleton.OnClientConnectedCallback -= GameManager.Instance.AddCachedUsername;
             }
         }
         else

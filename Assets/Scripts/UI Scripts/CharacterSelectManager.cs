@@ -351,5 +351,15 @@ public class CharacterSelectManager : NetworkBehaviour
         }
         lobbyPlayerPanels.Clear();
     }
+
+    public override void OnNetworkDespawn()
+    {
+        if (IsServer)
+        {
+            NetworkManager.OnClientConnectedCallback -= OnClientConnectedCallback;
+            NetworkManager.OnClientDisconnectCallback -= OnClientDisconnectedCallback;
+            SceneTransitionHandler.Instance.OnClientLoadedScene -= ClientLoadedScene;
+        }
+    }
     #endregion
 }
