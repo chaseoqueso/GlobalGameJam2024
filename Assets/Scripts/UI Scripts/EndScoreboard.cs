@@ -2,25 +2,27 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using Unity.Netcode;
+using UnityEngine.SceneManagement;
 
-public class EndScoreboard : MonoBehaviour
+public class EndScoreboard : NetworkBehaviour
 {
     [SerializeField] private GameObject scoresGrid;
     [SerializeField] private GameObject playerScorePanelPrefab;
+    [SerializeField] private GameObject newGameButton;
 
     void OnEnable()
     {
-        // TODO: Buttons only visible - or at least only interactable - for host
+        newGameButton.SetActive(IsHost || IsServer);
 
-        foreach(ulong clientID in NetworkManager.Singleton.ConnectedClientsIds){
+        foreach(ulong clientID in GameManager.Instance.GetClientIDs()){
             GameObject newPlayerPanel = Instantiate(playerScorePanelPrefab, new Vector3(0,0,0), Quaternion.identity, scoresGrid.transform);
 
             string username = GameManager.Instance.GetUsername(clientID);
 
-            // TODO: Get other values
-            int kills = 0;
-            int deaths = 0;
-            int score = 0;
+            Player currentPlayer = GameManager.Instance.GetPlayer(clientID);
+            int kills = currentPlayer.kills.Value;
+            int deaths = currentPlayer.deaths.Value;
+            int score = currentPlayer.score;
 
             newPlayerPanel.GetComponent<PlayerScorePanel>().SetValues(username, kills, deaths, score);
         }
@@ -28,13 +30,12 @@ public class EndScoreboard : MonoBehaviour
 
     public void NewGameButton()
     {
-        Debug.Log("new game");
-        // TODO (already attached to the button in the prefab)
+        SceneTransitionHandler.Instance.SwitchScene(SceneTransitionHandler.SceneStates.Lobby);
     }
 
     public void QuitGameButton()
     {
-        Debug.Log("QUIT");
-        // TODO (already attached to the button in the prefab)
+        NetworkManager.Singleton.Shutdown();
+        SceneManager.LoadScene(GameManager.MAIN_MENU_SCENE);
     }
 }

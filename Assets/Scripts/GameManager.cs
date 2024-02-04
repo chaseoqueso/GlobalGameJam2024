@@ -44,12 +44,13 @@ public class GameManager : NetworkBehaviour
     public Dictionary<ModelID,GameObject> torsoDatabase = new Dictionary<ModelID,GameObject>();
     public Dictionary<ModelID,GameObject> legsDatabase = new Dictionary<ModelID,GameObject>();
 
-    public float roundDuration = 60;
+    public float roundDuration = 10;
     public float timer { get; private set; }
     private bool gameHasStarted;
 
     private Dictionary<ulong, string> usernameDict = new();
     private Dictionary<ulong, PlayerModels> modelDict = new();
+    private Dictionary<ulong, Player> playerDict = new();
     private SortedList<ulong, int> scoreboard = new();
 
     void Awake()
@@ -71,6 +72,16 @@ public class GameManager : NetworkBehaviour
     public HashSet<ulong> GetClientIDs()
     {
         return new HashSet<ulong>(usernameDict.Keys);
+    }
+
+    public void AddPlayer(ulong clientId, Player player)
+    {
+        playerDict.Add(clientId, player);
+    }
+
+    public Player GetPlayer(ulong clientId)
+    {
+        return playerDict[clientId];
     }
 
     public void UpdatePlayerScore(ulong clientID, int score)
@@ -353,7 +364,7 @@ public class GameManager : NetworkBehaviour
 
             if(IsServer && timer <= 0)
             {
-                EndGameClientRpc();
+                EndGameServerRpc();
             }
         }
     }
@@ -377,10 +388,34 @@ public class GameManager : NetworkBehaviour
         gameHasStarted = true;
     }
 
+    [ServerRpc]
+    private void EndGameServerRpc()
+    {
+        EndGame();
+        EndGameClientRpc();
+    }
+
     [ClientRpc]
     private void EndGameClientRpc()
     {
-        // TODO end the game
+        EndGame();
+        GameUI.Instance.ToggleGameOverUI(true);
+        Cursor.lockState = CursorLockMode.None;
+        Cursor.visible = true;
+    }
+
+    private void EndGame()
+    {
+        Time.timeScale = 0;
+        SceneTransitionHandler.Instance.OnSceneStateChanged += ResetGame;
+    }
+
+    private void ResetGame(SceneTransitionHandler.SceneStates newState)
+    {
+        playerDict.Clear();
+        scoreboard.Clear();
+        Time.timeScale = 1;
+        SceneTransitionHandler.Instance.OnSceneStateChanged -= ResetGame;
     }
 #endregion
 

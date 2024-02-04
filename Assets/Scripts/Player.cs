@@ -17,7 +17,9 @@ public class Player : NetworkBehaviour
     private float respawnTimer = 5f;
     private float currRespawnTimer;
 
-    public NetworkVariable<int> score = new(0);
+    public int score { get => kills.Value - deaths.Value; }
+    public NetworkVariable<int> deaths = new(0);
+    public NetworkVariable<int> kills = new(0);
     private float recentHit = 0f;
     private Player nemesis;  // Last player that hit you
     private float recentHitTimer = 1f;
@@ -114,10 +116,10 @@ public class Player : NetworkBehaviour
 
     public void loseScore()
     {
-        score.Value--;
+        deaths.Value++;
         if(nemesis != null)
-            nemesis.score.Value++;
-        Debug.Log($"Score transfer complete. Current Score: {score.Value}");
+            nemesis.kills.Value++;
+        Debug.Log($"Score transfer complete. Current Score: {score}");
     }
     #endregion
 
@@ -256,8 +258,10 @@ public class Player : NetworkBehaviour
             currHealth.Value = maxHealth;
         }
         
+        GameManager.Instance.AddPlayer(OwnerClientId, this);
         GameManager.Instance.UpdatePlayerScore(OwnerClientId, 0);
-        score.OnValueChanged += (int old, int current) => GameManager.Instance.UpdatePlayerScore(OwnerClientId, current);
+        kills.OnValueChanged += (int old, int current) => GameManager.Instance.UpdatePlayerScore(OwnerClientId, current);
+        deaths.OnValueChanged += (int old, int current) => GameManager.Instance.UpdatePlayerScore(OwnerClientId, current);
 
         if(IsLocalPlayer)
         {

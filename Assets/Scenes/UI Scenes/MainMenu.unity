@@ -4713,6 +4713,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   cachedUsername: 
+  roundDuration: 10
 --- !u!4 &1517472913
 Transform:
   m_ObjectHideFlags: 0

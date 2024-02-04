@@ -12,6 +12,7 @@ GameObject:
   - component: {fileID: 1158261702}
   - component: {fileID: 1158261701}
   - component: {fileID: 1856992824909154872}
+  - component: {fileID: 3581719408896757202}
   m_Layer: 5
   m_Name: ScoreboardEndMenu
   m_TagString: Untagged
@@ -92,6 +93,23 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   scoresGrid: {fileID: 2385073612121581792}
   playerScorePanelPrefab: {fileID: 5669316249084437820, guid: a9bbb6f8705f1fe4cb9a3b175b5271f5, type: 3}
+  newGameButton: {fileID: 1743029806}
+--- !u!114 &3581719408896757202
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1158261699}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d5a57f767e5e46a458fc5d3c628d0cbb, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  GlobalObjectIdHash: 951099334
+  AlwaysReplicateAsRoot: 0
+  DontDestroyWithOwner: 0
+  AutoObjectParentSync: 1
 --- !u!1 &1376673555
 GameObject:
   m_ObjectHideFlags: 0
@@ -1922,10 +1940,10 @@ MonoBehaviour:
     m_NumColorKeys: 3
     m_NumAlphaKeys: 2
   chargeBar: {fileID: 1752059805130919366}
-  chargeBarFill: {fileID: 4498305943543173237}
+  chargeBarFill: {fileID: 2265700167382317618}
   timerText: {fileID: 6041281348585100186}
-  scoreboardText1: {fileID: 0}
-  scoreboardText2: {fileID: 0}
+  scoreboardText1: {fileID: 1376673557}
+  scoreboardText2: {fileID: 6186421785751849947}
   healthBar: {fileID: 7893537805411189447}
   gameOverUI: {fileID: 1158261699}
 --- !u!1 &6041281348952061935
