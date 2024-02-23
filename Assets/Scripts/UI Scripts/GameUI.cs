@@ -118,21 +118,22 @@ public class GameUI : MonoBehaviour
         public void IncrementCharge(float value)
         {
             chargeBar.value += value;
-            CheckSegment();
+            // CheckSegment();
         }
 
         public void DecreaseCharge(float value)
         {
             chargeBar.value -= value;
-            CheckSegment();
+            // CheckSegment();
         }
 
         public void SetCharge(float value)
         {
             chargeBar.value = value;
-            CheckSegment();
+            // CheckSegment();
         }
 
+        // Deprecated?
         private void CheckSegment()
         {
             chargeBarFill.color = chargeBarGradient.Evaluate(chargeBar.value);
@@ -168,6 +169,7 @@ public class GameUI : MonoBehaviour
             }
         }
 
+        // Deprecated?
         private void ActivateFirstSegment(bool set)
         {
             // TODO: Set to basic default
@@ -180,6 +182,7 @@ public class GameUI : MonoBehaviour
             }
         }
 
+        // Deprecated?
         private void ActivateSecondSegment(bool set)
         {
             // TODO: Transition into second segment
@@ -192,6 +195,7 @@ public class GameUI : MonoBehaviour
             }
         }
 
+        // Deprecated?
         private void ActivateThirdSegment(bool set)
         {
             // TODO: Transition into third segment
@@ -204,6 +208,7 @@ public class GameUI : MonoBehaviour
             }
         }
 
+        // Deprecated?
         private void ActivateFullChargeUI(bool set)
         {
             // TODO: Light on fire
