@@ -274,6 +274,7 @@ public class Player : NetworkBehaviour
             Cursor.visible = false;
 
             currHealth.OnValueChanged += (float _, float current) => GameUI.Instance.SetHealthBar(current);
+            DashAmount.OnValueChanged += (float _, float current) => GameUI.Instance.SetCharge(current);
         }
     }
 
